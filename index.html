@@ -1,1756 +1,634 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全球遠端工作目的地評比 Remote Work Destinations</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<title>Jerry Lin — Software Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0f1117;
-  --surface: #1a1d27;
-  --surface2: #232733;
-  --border: #2e3345;
-  --text: #e4e6ed;
-  --text2: #8b8fa3;
-  --accent: #6c8cff;
-  --accent2: #4ecdc4;
-  --green: #4ade80;
-  --yellow: #fbbf24;
-  --orange: #fb923c;
-  --red: #f87171;
-  --pink: #f472b6;
-  --purple: #a78bfa;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e18;color:#e0dcd6;line-height:1.7;overflow-x:hidden;cursor:none}
+a,.btn,.sk,.cl{cursor:none}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(232,192,112,.25)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0a0e18}::-webkit-scrollbar-thumb{background:#1e2a3c;border-radius:3px}
 
-/* Header */
-.header { background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%); border-bottom: 1px solid var(--border); padding: 2rem 1.5rem 1rem; }
-.header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
-.header h1 span { color: var(--accent); }
-.header p { color: var(--text2); font-size: 0.9rem; max-width: 700px; }
-.header .meta { display: flex; gap: 1.5rem; margin-top: 0.8rem; font-size: 0.8rem; color: var(--text2); flex-wrap: wrap; }
-.header .meta span { display: flex; align-items: center; gap: 0.3rem; }
+/* ===== PROGRESS BAR ===== */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#c8842a,#e8c070);z-index:10001;width:0;pointer-events:none}
 
-/* Nav Tabs */
-.nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-.nav::-webkit-scrollbar { display: none; }
-.nav button { flex-shrink: 0; background: none; border: none; color: var(--text2); padding: 0.75rem 1.2rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
-.nav button:hover { color: var(--text); background: var(--surface2); }
-.nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* ===== CABIN (standalone, proper proportions) ===== */
+/* Custom cursor */
+/* Cursor — small circle, smooth grow on hover */
+.cursor-dot{position:fixed;width:10px;height:10px;border:1px solid rgba(220,200,160,.4);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);opacity:0;transition:width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1),border-color .3s,background .3s}
+.cursor-dot.visible{opacity:1}
+.cursor-dot.hover{width:44px;height:44px;border-color:rgba(255,200,120,.35);background:rgba(255,200,120,.04)}
+@media(hover:none){.cursor-dot{display:none}body{cursor:auto}a,.btn,.sk,.cl{cursor:auto}}
 
-/* Filters */
-.filters { display: flex; gap: 0.5rem; padding: 0.8rem 1.5rem; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
-.filters label { font-size: 0.75rem; color: var(--text2); margin-right: 0.2rem; }
-.filters select, .filters input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.8rem; }
-.filters select:focus, .filters input:focus { outline: none; border-color: var(--accent); }
-.filter-group { display: flex; align-items: center; gap: 0.3rem; }
-.search-box { flex: 1; min-width: 150px; max-width: 250px; }
+.cabin-wrap{position:absolute;bottom:6vh;left:44%;transform:translateX(-50%) translateZ(30px);z-index:8;pointer-events:none;transform-style:preserve-3d}
+.fire-wrap{position:absolute;bottom:6vh;left:calc(44% + 220px);z-index:8;pointer-events:auto;transform:translateZ(45px);transform-style:preserve-3d;transform-origin:bottom center;cursor:none}
+.flame-group{position:relative;width:160px;height:130px}
+.flame{position:absolute;bottom:0;left:50%;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;transform-origin:bottom center;filter:blur(1.5px)}
+.f1{width:50px;height:95px;transform:translateX(-50%);background:linear-gradient(to top,rgba(255,130,30,.9),rgba(255,175,55,.5) 35%,rgba(255,215,85,.15) 70%,transparent);animation:fl1 .7s ease-in-out infinite alternate}
+.f2{width:36px;height:72px;left:22%;transform:translateX(-50%);background:linear-gradient(to top,rgba(255,140,35,.8),rgba(255,185,60,.3) 45%,transparent);animation:fl2 .55s ease-in-out .1s infinite alternate}
+.f3{width:38px;height:76px;left:78%;transform:translateX(-50%);background:linear-gradient(to top,rgba(255,135,30,.8),rgba(255,180,55,.3) 45%,transparent);animation:fl3 .65s ease-in-out .15s infinite alternate}
+.f4{width:24px;height:52px;left:10%;transform:translateX(-50%);background:linear-gradient(to top,rgba(255,150,40,.6),transparent 70%);animation:fl4 .5s ease-in-out .25s infinite alternate}
+.f5{width:26px;height:56px;left:90%;transform:translateX(-50%);background:linear-gradient(to top,rgba(255,145,38,.6),transparent 70%);animation:fl5 .55s ease-in-out infinite alternate}
+.f-core{width:22px;height:65px;transform:translateX(-50%);filter:blur(1px);background:linear-gradient(to top,rgba(255,240,180,1),rgba(255,255,220,.6) 45%,transparent);animation:flc .35s ease-in-out infinite alternate}
+.fire-glow{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:480px;height:340px;background:radial-gradient(ellipse,rgba(255,150,50,.38) 0%,rgba(255,120,40,.14) 45%,transparent 58%);filter:blur(16px);animation:gp 2s ease-in-out infinite alternate}
+.fire-ground{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:250px;height:40px;background:radial-gradient(ellipse,rgba(255,140,50,.1) 0%,transparent 65%);filter:blur(8px)}
+.fire-logs{display:block;margin-top:-5px}
+/* Embers */
+.ember{position:absolute;width:3px;height:3px;border-radius:50%;background:#ff9030;box-shadow:0 0 4px #ff7020;bottom:70px;left:50%}
+.ember:nth-child(7){animation:emb 2.2s ease-out infinite;left:45%}
+.ember:nth-child(8){animation:emb 2.8s ease-out .4s infinite;left:55%;width:2px;height:2px}
+.ember:nth-child(9){animation:emb 2.5s ease-out .8s infinite;left:48%}
+.ember:nth-child(10){animation:emb 3s ease-out 1.2s infinite;left:52%;width:2px;height:2px}
+.ember:nth-child(11){animation:emb 2.6s ease-out 1.6s infinite;left:42%}
+@keyframes emb{0%{transform:translate(0,0) scale(1);opacity:.9}50%{transform:translate(8px,-50px) scale(.6);opacity:.5}100%{transform:translate(14px,-100px) scale(.2);opacity:0}}
+@keyframes fl1{0%{height:88px;transform:translateX(-50%) rotate(-1.5deg)}100%{height:102px;transform:translateX(-50%) rotate(1deg)}}
+@keyframes fl2{0%{height:65px;transform:translateX(-50%) rotate(2deg)}100%{height:78px;transform:translateX(-50%) rotate(-1.5deg)}}
+@keyframes fl3{0%{height:70px;transform:translateX(-50%) rotate(-1.8deg)}100%{height:82px;transform:translateX(-50%) rotate(1.5deg)}}
+@keyframes fl4{0%{height:45px;transform:translateX(-50%) rotate(3deg)}100%{height:58px;transform:translateX(-50%) rotate(-2deg)}}
+@keyframes fl5{0%{height:50px;transform:translateX(-50%) rotate(-2.5deg)}100%{height:62px;transform:translateX(-50%) rotate(2deg)}}
+@keyframes flc{0%{height:58px;transform:translateX(-50%) scaleX(.9)}100%{height:72px;transform:translateX(-50%) scaleX(1.1)}}
 
-/* Content */
-.content { padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:1000;transition:all .5s}
+nav.scrolled{background:rgba(10,14,24,.92);backdrop-filter:blur(20px);padding:14px 40px}
+.nav-logo{font-weight:700;font-size:.95rem;color:rgba(255,255,255,.4)}
+.nav-links{display:flex;gap:30px}
+.nav-links a{font-size:.82rem;font-weight:500;color:rgba(255,255,255,.28);transition:color .3s}
+.nav-links a:hover{color:#e8c070}
+@media(max-width:768px){nav{padding:16px 20px}.nav-links{display:none}}
 
-/* Overview Cards */
-.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; }
-.stat-card .label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-card .value { font-size: 1.5rem; font-weight: 700; margin-top: 0.2rem; }
-.stat-card .sub { font-size: 0.8rem; color: var(--text2); margin-top: 0.2rem; }
+/* ===== HERO ===== */
+.hero{position:relative;height:100vh;min-height:650px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+/* Rainy dusk sky — slightly brighter, moody but visible */
+.hero__sky{position:absolute;inset:0;background:linear-gradient(180deg,#0a1018 0%,#0e1824 8%,#142030 18%,#182838 28%,#1c3040 38%,#203442 48%,#243644 56%,#283840 62%,#2e3840 70%,#383c3c 78%,#443c38 84%,#584034 88%,#6a4830 92%,#3a2818 96%,#0a0e18 100%)}
 
-/* Table */
-.table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-thead { background: var(--surface2); position: sticky; top: 0; z-index: 2; }
-th { padding: 0.6rem 0.8rem; text-align: left; font-weight: 600; color: var(--text2); cursor: pointer; white-space: nowrap; user-select: none; border-bottom: 1px solid var(--border); }
-th:hover { color: var(--text); }
-th .sort-icon { margin-left: 0.3rem; font-size: 0.7rem; }
-td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
-tr { background: var(--surface); transition: background 0.15s; }
-tr:hover { background: var(--surface2); }
-tr:last-child td { border-bottom: none; }
+/* 3D scene container */
+.scene-3d{position:absolute;inset:0;perspective:600px;transform-style:preserve-3d;overflow:hidden}
 
-/* Score Badges */
-.score { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
-.score.excellent { background: rgba(74,222,128,0.15); color: var(--green); }
-.score.good { background: rgba(78,205,196,0.15); color: var(--accent2); }
-.score.ok { background: rgba(251,191,36,0.15); color: var(--yellow); }
-.score.poor { background: rgba(251,146,60,0.15); color: var(--orange); }
-.score.bad { background: rgba(248,113,113,0.15); color: var(--red); }
+/* Scene layers — positioned with translateZ for TRUE 3D depth */
+.scene-layer{position:absolute;left:0;right:0;bottom:0;will-change:transform;pointer-events:none;transform-style:preserve-3d}
+.scene-layer svg{display:block;width:100%;height:100%}
+.layer-mtn{height:70vh;min-height:380px;z-index:2;transform:translateZ(-250px) scale(1.417)}
+.layer-ff{height:78vh;min-height:440px;z-index:3;transform:translateZ(-140px) scale(1.233)}
+.layer-mf{height:76vh;min-height:420px;z-index:4;transform:translateZ(-50px) scale(1.083)}
+.layer-nf{height:85vh;min-height:480px;z-index:7;transform:translateZ(80px) scale(0.867)}
 
-/* Level Badges */
-.badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
-.badge.green { background: rgba(74,222,128,0.12); color: var(--green); }
-.badge.yellow { background: rgba(251,191,36,0.12); color: var(--yellow); }
-.badge.orange { background: rgba(251,146,60,0.12); color: var(--orange); }
-.badge.red { background: rgba(248,113,113,0.12); color: var(--red); }
-.badge.blue { background: rgba(108,140,255,0.12); color: var(--accent); }
-.badge.purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+/* Glows */
+.hero__wglow{position:absolute;bottom:6%;left:38%;width:800px;height:550px;z-index:5;pointer-events:none;background:radial-gradient(ellipse,rgba(255,195,90,.24) 0%,rgba(255,180,80,.09) 40%,transparent 58%);animation:gp 4s ease-in-out infinite alternate}
+.hero__fglow{position:absolute;bottom:4%;left:48%;width:500px;height:400px;z-index:5;pointer-events:none;background:radial-gradient(ellipse,rgba(255,150,50,.34) 0%,transparent 48%);filter:blur(14px);animation:gp 2s ease-in-out infinite alternate}
+@keyframes gp{0%{opacity:.7}100%{opacity:1}}
 
-/* City flag / region */
-.city-name { font-weight: 600; }
-.country-tag { font-size: 0.72rem; color: var(--text2); }
-.region-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.4rem; }
-.region-dot.europe { background: var(--accent); }
-.region-dot.asia { background: var(--pink); }
-.region-dot.usa { background: var(--orange); }
-.region-dot.oceania { background: var(--green); }
-.region-dot.uk { background: var(--purple); }
+/* Fog + rain mist */
+.fog{position:absolute;width:200%;pointer-events:none;z-index:8;filter:blur(30px)}
+.fog-1{bottom:22%;left:-40%;height:80px;background:radial-gradient(ellipse 80% 100% at 50% 50%,rgba(160,180,200,.05),transparent);animation:fd 28s ease-in-out infinite alternate}
+.fog-2{bottom:35%;right:-50%;height:60px;background:radial-gradient(ellipse 70% 100% at 50% 50%,rgba(150,170,190,.04),transparent);animation:fd 22s ease-in-out infinite alternate-reverse}
+.fog-3{bottom:45%;left:-30%;height:120px;background:radial-gradient(ellipse 90% 100% at 50% 50%,rgba(140,160,180,.03),transparent);animation:fd 35s ease-in-out infinite alternate}
+/* Rain mist overlay — covers whole scene */
+.rain-mist{position:absolute;inset:0;z-index:8;pointer-events:none;background:linear-gradient(180deg,rgba(100,120,140,.03) 0%,rgba(100,120,140,.06) 50%,rgba(100,120,140,.03) 100%)}
+@keyframes fd{0%{transform:translateX(-4%)}100%{transform:translateX(4%)}}
 
-/* Detail Modal */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
-.modal-overlay.show { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.5rem; }
-.modal h2 { font-size: 1.3rem; margin-bottom: 0.3rem; }
-.modal h3 { font-size: 1rem; color: var(--accent); margin: 1.2rem 0 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
-.modal .close-btn { float: right; background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
-.modal .close-btn:hover { background: var(--border); }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1.5rem; font-size: 0.85rem; }
-.detail-grid dt { color: var(--text2); }
-.detail-grid dd { font-weight: 500; }
-.detail-notes { background: var(--surface2); border-radius: 8px; padding: 0.8rem 1rem; margin-top: 0.5rem; font-size: 0.83rem; }
-.detail-notes ul { margin-left: 1.2rem; }
-.detail-notes li { margin-bottom: 0.3rem; }
-.visa-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
-.visa-card { background: var(--surface2); border-radius: 8px; padding: 0.6rem 0.8rem; text-align: center; }
-.visa-card .passport { font-size: 0.72rem; color: var(--text2); }
-.visa-card .days { font-size: 1.2rem; font-weight: 700; }
-.visa-card .note { font-size: 0.7rem; color: var(--text2); }
+/* Ground fade */
+.hero__ground{position:absolute;bottom:0;left:0;right:0;height:10vh;z-index:9;background:linear-gradient(transparent,#0a0e18)}
 
-/* Section headers */
-.section-header { margin-bottom: 1rem; }
-.section-header h2 { font-size: 1.2rem; margin-bottom: 0.2rem; }
-.section-header p { color: var(--text2); font-size: 0.85rem; }
+/* Moon — SVG crescent */
+.hero__moon{position:absolute;top:5%;right:11%;width:140px;height:140px;z-index:2;pointer-events:none;animation:moonFloat 8s ease-in-out infinite alternate}
+@keyframes moonFloat{0%{transform:translateY(0)}100%{transform:translateY(-5px)}}
 
+#weatherCanvas{position:fixed;inset:0;z-index:100;pointer-events:none}
 
-/* ===== MOBILE OPTIMIZATIONS ===== */
-@media (max-width: 768px) {
-  .header { padding: 1.2rem 1rem 0.8rem; }
-  .header h1 { font-size: 1.2rem; }
-  .header p { font-size: 0.78rem; }
-  .header .meta { gap: 0.8rem; font-size: 0.7rem; }
-  .nav { gap: 0; }
-  .nav button { padding: 0.6rem 0.8rem; font-size: 0.78rem; min-width: 0; }
-  .filters { padding: 0.5rem 0.8rem; gap: 0.4rem; }
-  .filters select, .filters input { font-size: 0.78rem; padding: 0.4rem 0.5rem; }
-  .filter-group { flex-wrap: nowrap; }
-  .search-box { min-width: 120px; max-width: 100%; }
-  .content { padding: 0.8rem; }
-  .stats-row { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-  .stat-card { padding: 0.7rem 0.8rem; }
-  .stat-card .value { font-size: 1.2rem; }
-  table { font-size: 0.72rem; }
-  th, td { padding: 0.4rem 0.5rem; }
-  .modal { padding: 1rem; border-radius: 10px; max-height: 95vh; }
-  .modal h2 { font-size: 1.1rem; }
-  .modal h3 { font-size: 0.9rem; }
-  .detail-grid { grid-template-columns: 1fr; gap: 0.3rem 0; }
-  .detail-notes { font-size: 0.78rem; padding: 0.6rem 0.8rem; }
-  .visa-row { grid-template-columns: 1fr; gap: 0.3rem; }
-  .insights { grid-template-columns: 1fr; gap: 0.8rem; }
-  .insight-card { padding: 0.8rem; }
-  .insight-card h4 { font-size: 0.85rem; }
-  .insight-card p { font-size: 0.78rem; }
-  .sources ul { columns: 1; }
-  .modal img { height: 150px !important; }
-}
+/* Hero content */
+.hero__content{position:relative;z-index:50;text-align:center;padding:0 24px;margin-bottom:6vh}
+.hero__name{font-size:clamp(3.2rem,8vw,6.5rem);font-weight:800;letter-spacing:-3px;line-height:.92;color:#fff;text-shadow:0 4px 50px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.3);opacity:0;animation:hu 1.4s cubic-bezier(.16,1,.3,1) .4s forwards}
+.hero__role{font-size:clamp(.95rem,1.8vw,1.15rem);font-weight:400;color:rgba(255,255,255,.45);margin-top:14px;text-shadow:0 2px 16px rgba(0,0,0,.4);opacity:0;animation:hu 1.4s cubic-bezier(.16,1,.3,1) .7s forwards}
+.hero__role span{color:#e8c070;font-weight:600}
+.hero__cta{margin-top:32px;display:flex;gap:14px;justify-content:center;opacity:0;animation:hu 1.4s cubic-bezier(.16,1,.3,1) 1s forwards}
+@keyframes hu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.btn{padding:12px 32px;border-radius:10px;font-size:.87rem;font-weight:600;transition:all .35s;backdrop-filter:blur(8px);cursor:pointer;display:inline-block}
+.btn--warm{background:rgba(232,192,112,.12);color:#e8c070;border:1px solid rgba(232,192,112,.2)}
+.btn--warm:hover{background:rgba(232,192,112,.22);border-color:rgba(232,192,112,.4);transform:translateY(-2px);box-shadow:0 8px 25px rgba(200,140,40,.08)}
+.btn--glass{background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.07)}
+.btn--glass:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.7);transform:translateY(-2px)}
+.scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;opacity:0;animation:hu 1.4s cubic-bezier(.16,1,.3,1) 1.4s forwards}
+.scroll-mouse{width:20px;height:32px;border:1.5px solid rgba(255,255,255,.22);border-radius:10px;position:relative}
+.scroll-mouse::after{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:2px;height:6px;background:rgba(255,255,255,.3);border-radius:2px;animation:sd 1.8s ease-in-out infinite}
+@keyframes sd{0%{transform:translateX(-50%) translateY(0);opacity:1}100%{transform:translateX(-50%) translateY(9px);opacity:0}}
 
-@media (max-width: 480px) {
-  .header h1 { font-size: 1rem; }
-  .nav button { padding: 0.5rem 0.6rem; font-size: 0.7rem; }
-  .stats-row { grid-template-columns: 1fr; }
-  table { font-size: 0.68rem; }
-  th, td { padding: 0.3rem 0.4rem; }
-  .score { font-size: 0.7rem; min-width: 30px; padding: 0.1rem 0.3rem; }
-  .badge { font-size: 0.65rem; padding: 0.05rem 0.3rem; }
-  .modal { margin: 0; border-radius: 0; max-height: 100vh; width: 100%; }
-  .modal-overlay { padding: 0; }
-  .filter-group label { display: none; }
-}
+/* ===== SECTIONS ===== */
+.section{padding:100px 0;position:relative}
+.container{max-width:1060px;margin:0 auto;padding:0 28px}
+.sec-label{font-size:.7rem;font-weight:600;color:#c08840;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;opacity:.55}
+.sec-heading{font-size:clamp(1.85rem,3.5vw,2.7rem);font-weight:700;letter-spacing:-1px;margin-bottom:40px;color:#eee8e0;line-height:1.15}
+.sec-heading em{font-style:normal;color:#e8c070}
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+.glass{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);border-radius:16px;backdrop-filter:blur(10px)}
 
-/* Touch-friendly */
-@media (hover: none) {
-  tr:active { background: var(--surface2); }
-  th[data-col]:active { color: var(--accent); }
-  .nav button:active { background: var(--surface2); color: var(--accent); }
-  a { -webkit-tap-highlight-color: rgba(108,140,255,0.2); }
-}
+.about-grid{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:start;padding:32px;border-radius:20px}
+.about-photo{border-radius:12px;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,.4)}
+.about-photo img{width:100%;display:block;filter:brightness(.88) saturate(.85);transition:filter .4s}
+.about-photo:hover img{filter:brightness(1) saturate(1)}
+.about-text{font-size:.93rem;color:rgba(255,255,255,.48);line-height:1.9}
+.about-text p{margin-bottom:12px}
+.about-text strong{color:rgba(255,255,255,.72);font-weight:600}
+.about-meta{display:flex;gap:28px;margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.04)}
+.meta-item .label{display:block;font-size:.67rem;color:rgba(255,255,255,.2);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.meta-item .value{font-size:.84rem;color:rgba(255,255,255,.5)}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr;text-align:center}.about-photo{max-width:170px;margin:0 auto}.about-meta{flex-wrap:wrap;gap:14px;justify-content:center}}
 
-/* Safe area for notch phones */
-@supports (padding: max(0px)) {
-  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
-  .modal { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-}
+.exp-grid{display:flex;flex-direction:column;gap:12px}
+.exp-card{padding:24px 28px;transition:all .3s}
+.exp-card:hover{border-color:rgba(232,192,112,.08);transform:translateX(5px);background:rgba(255,255,255,.03)}
+.exp-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:5px}
+.exp-company{font-size:.8rem;font-weight:600;color:#e8c070}
+.exp-date{font-size:.76rem;color:rgba(255,255,255,.2)}
+.exp-role{font-size:1.05rem;font-weight:600;color:rgba(255,255,255,.72);margin-bottom:8px}
+.exp-desc{list-style:none;font-size:.86rem;color:rgba(255,255,255,.38);line-height:1.85}
+.exp-desc li{padding-left:16px;position:relative;margin-bottom:3px}
+.exp-desc li::before{content:'\2014';position:absolute;left:0;color:rgba(232,192,112,.2)}
 
+.skill-wrap{display:flex;flex-wrap:wrap;gap:9px}
+.sk{padding:9px 20px;font-size:.84rem;font-weight:500;color:rgba(255,255,255,.38);transition:all .3s;cursor:default}
+.sk:hover{border-color:rgba(232,192,112,.18);color:#e8c070;transform:translateY(-2px)}
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+.int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.int-card{padding:0;min-height:360px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;transition:all .4s}
+.int-card:hover{transform:translateY(-6px);border-color:rgba(232,192,112,.08)}
+.int-card-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;opacity:.45;transition:opacity .5s,transform .5s}
+.int-card:hover .int-card-bg{opacity:.6;transform:scale(1.04)}
+.int-card-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,24,.1) 0%,rgba(10,14,24,.4) 40%,rgba(10,14,24,.8) 70%,rgba(10,14,24,.92))}
+.int-card-content{position:relative;z-index:1;padding:24px 22px}
+.int-icon{font-size:2.1rem;margin-bottom:12px}
+.int-title{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px}
+.int-desc{font-size:.87rem;color:rgba(255,255,255,.7);line-height:1.75}
+.int-tag{font-size:.73rem;font-weight:600;color:#e8b860;margin-top:12px;opacity:.75}
+@media(max-width:768px){.int-grid{grid-template-columns:1fr;max-width:380px;margin:0 auto}}
 
-/* Tooltip */
-.tip { position: relative; cursor: help; border-bottom: 1px dotted var(--text2); }
-.tip:hover::after { content: attr(data-tip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; z-index: 10; max-width: 300px; white-space: normal; }
+.contact-inner{text-align:center;max-width:580px;margin:0 auto}
+.contact-inner p{font-size:.95rem;color:rgba(255,255,255,.32);margin-bottom:36px}
+.contact-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cl{display:flex;align-items:center;gap:8px;padding:12px 24px;font-size:.84rem;font-weight:500;color:rgba(255,255,255,.35);transition:all .3s}
+.cl:hover{border-color:rgba(232,192,112,.16);color:#e8c070;transform:translateY(-2px)}
+.cl svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
+@media(max-width:480px){.contact-links{flex-direction:column;align-items:center}}
+footer{text-align:center;padding:32px;font-size:.7rem;color:rgba(255,255,255,.07)}
 
-/* Sources */
-.sources { margin-top: 2rem; padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.78rem; color: var(--text2); }
-.sources h3 { font-size: 0.85rem; color: var(--text); margin-bottom: 0.5rem; }
-.sources ul { columns: 2; column-gap: 2rem; list-style: disc inside; }
-.sources li { margin-bottom: 0.2rem; break-inside: avoid; }
-@media (max-width: 768px) { .sources ul { columns: 1; } }
-
-/* Key Insights */
-.insights { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-.insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; border-left: 3px solid var(--accent); }
-.insight-card.warn { border-left-color: var(--orange); }
-.insight-card.good { border-left-color: var(--green); }
-.insight-card h4 { font-size: 0.9rem; margin-bottom: 0.3rem; }
-.insight-card p { font-size: 0.82rem; color: var(--text2); }
-
-/* Comparison highlight */
-.highlight-row { background: rgba(108,140,255,0.08) !important; }
-
-/* Sortable table headers */
-th[data-col] { cursor: pointer; user-select: none; }
-th[data-col]:hover { color: var(--accent); }
-th[data-col]::after { content: ''; margin-left: 4px; font-size: 0.65rem; }
-th[data-col].asc::after { content: '▲'; }
-th[data-col].desc::after { content: '▼'; }
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.15}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>全球遠端工作 <span>目的地</span> 評比</h1>
-  <p>針對持有台灣🇹🇼、香港🇭🇰、加拿大🇨🇦護照的遠端工作者 remote worker，涵蓋治安、簽證、生活成本、醫療、時區相容性等全方位比較</p>
-  <div class="meta">
-    <span>📅 資料更新：2026-03-24</span>
-    <span>🌍 精選 27 座城市</span>
-    <span>📊 來源：GPI, Numbeo, OECD, WHO, NomadList</span>
-  </div>
-</div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<nav id="nav"><div class="nav-logo">jerry.lin</div><div class="nav-links"><a href="#about">About</a><a href="#experience">Experience</a><a href="#interests">Beyond Code</a><a href="#contact">Contact</a></div></nav>
 
-<div class="nav" id="nav">
-  <button class="active" data-tab="overview">總覽排名</button>
-  <button data-tab="safety">治安</button>
-  <button data-tab="visa">簽證</button>
-  <button data-tab="cost">生活成本</button>
-  <button data-tab="food">飲食</button>
-  <button data-tab="healthcare">醫療</button>
-  <button data-tab="wealth">富裕與教育</button>
-  <button data-tab="tourism">旅遊資源</button>
-  <button data-tab="practical">實用資訊</button>
-  <button data-tab="charts">圖表分析</button>
-  <button data-tab="insights">你該知道的事</button>
-</div>
-
-<div class="filters">
-  <div class="filter-group">
-    <label>地區</label>
-    <select id="filterRegion">
-      <option value="all">全部</option>
-      <option value="europe">歐洲</option>
-      <option value="asia">亞洲</option>
-      <option value="usa">美國</option>
-      <option value="oceania">紐澳</option>
-    </select>
-  </div>
-  <div class="filter-group">
-    <label>月預算</label>
-    <select id="filterBudget">
-      <option value="all">全部</option>
-      <option value="1500">< $1,500</option>
-      <option value="2500">< $2,500</option>
-      <option value="3500">< $3,500</option>
-      <option value="5000">< $5,000</option>
-    </select>
-  </div>
-
-
-  <div class="filter-group" id="sortGroup">
-    <label>排序</label>
-    <select id="sortBy">
-      <option value="overall">綜合評分</option>
-      <option value="safety">治安最佳</option>
-      <option value="cost">最便宜</option>
-      <option value="costDesc">最貴</option>
-      <option value="healthcare">醫療最佳</option>
-      <option value="english">英語最佳</option>
-      <option value="tourism">旅遊最豐富</option>
-      <option value="gdp">最富裕</option>
-    </select>
-  </div>
-  <div class="filter-group search-box">
-    <input type="text" id="searchBox" placeholder="搜尋城市或國家（中英文皆可）..." style="width:100%">
-  </div>
-</div>
-
-<div class="content">
-  <!-- OVERVIEW TAB -->
-  <div class="tab-panel active" id="panel-overview">
-    <div class="stats-row" id="statsRow"></div>
-    <div class="table-wrap">
-      <table id="mainTable">
-        <thead>
-          <tr>
-            <th data-col="rank">#</th>
-            <th data-col="city">城市</th>
-            <th data-col="overall">綜合</th>
-            <th data-col="safety">治安</th>
-            <th data-col="cost">月成本</th>
-            <th>簽證 (最長天數)</th>
-            <th data-col="health">醫療</th>
-            <th data-col="eng">英語</th>
-            <th>遠端合法</th>
-          </tr>
-        </thead>
-        <tbody id="mainBody"></tbody>
-      </table>
-    </div>
+<section class="hero">
+  <div class="scene-3d" id="scene3d">
+  <div class="hero__sky"></div>
+  <svg style="position:absolute;inset:0;z-index:1;pointer-events:none" viewBox="0 0 1440 700">
+    <circle cx="1329" cy="65" r="0.5" fill="rgba(255,255,255,0.22)" style="animation:twinkle 4.9s 3.6s ease-in-out infinite"/>
+    <circle cx="198" cy="310" r="0.9" fill="rgba(255,255,255,0.16)" style="animation:twinkle 2.6s 0.8s ease-in-out infinite"/>
+    <circle cx="1350" cy="287" r="0.9" fill="rgba(255,255,255,0.26)" style="animation:twinkle 5.2s 0.6s ease-in-out infinite"/>
+    <circle cx="885" cy="182" r="0.8" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="798" cy="57" r="0.8" fill="rgba(255,255,255,0.24)"/>
+    <circle cx="960" cy="282" r="0.6" fill="rgba(255,255,255,0.38)"/>
+    <circle cx="1307" cy="324" r="1.3" fill="rgba(255,255,255,0.24)"/>
+    <circle cx="1374" cy="124" r="1.2" fill="rgba(255,255,255,0.4)" style="animation:twinkle 3.8s 1.8s ease-in-out infinite"/>
+    <circle cx="767" cy="91" r="0.8" fill="rgba(255,255,255,0.2)" style="animation:twinkle 4.8s 2.4s ease-in-out infinite"/>
+    <circle cx="370" cy="281" r="1.2" fill="rgba(255,255,255,0.19)" style="animation:twinkle 4.7s 2.2s ease-in-out infinite"/>
+    <circle cx="684" cy="36" r="0.7" fill="rgba(255,255,255,0.16)"/>
+    <circle cx="452" cy="298" r="1.3" fill="rgba(255,255,255,0.23)"/>
+    <circle cx="1336" cy="242" r="0.6" fill="rgba(255,255,255,0.18)" style="animation:twinkle 5.1s 1.7s ease-in-out infinite"/>
+    <circle cx="1215" cy="212" r="0.8" fill="rgba(255,255,255,0.4)"/>
+    <circle cx="116" cy="64" r="0.6" fill="rgba(255,255,255,0.19)" style="animation:twinkle 3.8s 2.4s ease-in-out infinite"/>
+    <circle cx="978" cy="278" r="2.1" fill="rgba(255,255,255,0.47)" style="animation:twinkle 5.1s 3.1s ease-in-out infinite"/>
+    <circle cx="716" cy="65" r="0.8" fill="rgba(255,255,255,0.19)" style="animation:twinkle 5.0s 3.9s ease-in-out infinite"/>
+    <circle cx="385" cy="267" r="1.3" fill="rgba(255,255,255,0.37)" style="animation:twinkle 4.6s 0.6s ease-in-out infinite"/>
+    <circle cx="350" cy="284" r="2.0" fill="rgba(255,255,255,0.55)"/>
+    <circle cx="763" cy="165" r="0.7" fill="rgba(255,255,255,0.21)"/>
+    <circle cx="1015" cy="43" r="1.4" fill="rgba(255,255,255,0.28)" style="animation:twinkle 5.8s 0.7s ease-in-out infinite"/>
+    <circle cx="1100" cy="318" r="0.9" fill="rgba(255,255,255,0.2)" style="animation:twinkle 3.2s 1.2s ease-in-out infinite"/>
+    <circle cx="1395" cy="340" r="0.8" fill="rgba(255,255,255,0.37)"/>
+    <circle cx="151" cy="181" r="0.5" fill="rgba(255,255,255,0.29)"/>
+    <circle cx="1312" cy="38" r="0.7" fill="rgba(255,255,255,0.38)"/>
+    <circle cx="507" cy="150" r="1.1" fill="rgba(255,255,255,0.2)" style="animation:twinkle 4.5s 1.9s ease-in-out infinite"/>
+    <circle cx="988" cy="216" r="0.7" fill="rgba(255,255,255,0.17)"/>
+    <circle cx="976" cy="35" r="1.1" fill="rgba(255,255,255,0.4)"/>
+    <circle cx="714" cy="63" r="0.7" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="590" cy="244" r="0.7" fill="rgba(255,255,255,0.38)" style="animation:twinkle 4.4s 0.2s ease-in-out infinite"/>
+    <circle cx="1127" cy="15" r="1.4" fill="rgba(255,255,255,0.38)"/>
+    <circle cx="1014" cy="254" r="0.7" fill="rgba(255,255,255,0.25)"/>
+    <circle cx="819" cy="143" r="1.3" fill="rgba(255,255,255,0.35)" style="animation:twinkle 5.1s 3.1s ease-in-out infinite"/>
+    <circle cx="1375" cy="257" r="2.0" fill="rgba(255,255,255,0.56)" style="animation:twinkle 2.7s 2.3s ease-in-out infinite"/>
+    <circle cx="1049" cy="279" r="0.6" fill="rgba(255,255,255,0.39)"/>
+    <circle cx="1238" cy="42" r="1.1" fill="rgba(255,255,255,0.21)" style="animation:twinkle 3.4s 2.4s ease-in-out infinite"/>
+    <circle cx="1288" cy="49" r="0.9" fill="rgba(255,255,255,0.3)" style="animation:twinkle 3.2s 2.9s ease-in-out infinite"/>
+    <circle cx="508" cy="143" r="0.9" fill="rgba(255,255,255,0.32)"/>
+    <circle cx="168" cy="12" r="1.7" fill="rgba(255,255,255,0.49)"/>
+    <circle cx="734" cy="43" r="1.3" fill="rgba(255,255,255,0.24)" style="animation:twinkle 5.0s 2.4s ease-in-out infinite"/>
+    <circle cx="1359" cy="278" r="0.5" fill="rgba(255,255,255,0.35)" style="animation:twinkle 5.8s 0.5s ease-in-out infinite"/>
+    <circle cx="256" cy="62" r="1.2" fill="rgba(255,255,255,0.19)"/>
+    <circle cx="722" cy="112" r="1.1" fill="rgba(255,255,255,0.36)"/>
+    <circle cx="124" cy="55" r="1.1" fill="rgba(255,255,255,0.36)"/>
+    <circle cx="287" cy="334" r="1.4" fill="rgba(255,255,255,0.19)" style="animation:twinkle 4.5s 0.4s ease-in-out infinite"/>
+    <circle cx="325" cy="287" r="0.5" fill="rgba(255,255,255,0.24)"/>
+    <circle cx="105" cy="165" r="1.6" fill="rgba(255,255,255,0.52)" style="animation:twinkle 4.8s 1.4s ease-in-out infinite"/>
+    <circle cx="1166" cy="216" r="1.8" fill="rgba(255,255,255,0.48)" style="animation:twinkle 3.1s 1.6s ease-in-out infinite"/>
+    <circle cx="387" cy="178" r="1.2" fill="rgba(255,255,255,0.25)" style="animation:twinkle 3.4s 0.6s ease-in-out infinite"/>
+    <circle cx="241" cy="203" r="1.3" fill="rgba(255,255,255,0.36)" style="animation:twinkle 4.1s 1.2s ease-in-out infinite"/>
+  </svg>
+  <div class="hero__moon">
+    <svg viewBox="0 0 140 140" width="140" height="140" style="overflow:visible">
+      <defs>
+        <mask id="crescentMask"><rect width="140" height="140" fill="black"/><circle cx="70" cy="70" r="46" fill="white"/><circle cx="86" cy="55" r="40" fill="black"/></mask>
+        <filter id="mGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="mHalo"><feGaussianBlur stdDeviation="20"/></filter>
+      </defs>
+      <circle cx="70" cy="70" r="62" fill="rgba(180,200,235,.05)" filter="url(#mHalo)"/>
+      <circle cx="70" cy="70" r="46" fill="rgba(215,225,245,.5)" mask="url(#crescentMask)" filter="url(#mGlow)"/>
+      <circle cx="70" cy="70" r="46" fill="rgba(240,245,255,.15)" mask="url(#crescentMask)"/>
+    </svg>
   </div>
 
-  <!-- SAFETY TAB -->
-  <div class="tab-panel" id="panel-safety">
-    <div class="section-header">
-      <h2>治安排名</h2>
-      <p>依據全球和平指數 Global Peace Index 2025、Numbeo 安全指數 Safety Index 2025、各國犯罪統計及反亞裔仇恨數據交叉比對</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="numbeo">Numbeo 安全指數</th>
-            <th data-col="gpi">GPI 排名</th>
-            <th data-col="petty">小偷扒竊</th>
-            <th data-col="violent">暴力犯罪</th>
-            <th data-col="asian">東亞人風險</th>
-            <th data-col="scam">詐騙程度</th>
-            <th>需避開區域</th>
-          </tr>
-        </thead>
-        <tbody id="safetyBody"></tbody>
-      </table>
-    </div>
+  <!-- Mountains -->
+  <div class="scene-layer layer-mtn" data-speed="0.04">
+    <svg viewBox="0 0 1440 600" preserveAspectRatio="none"><path d="M0,600 L0,380 C120,340 200,260 320,240 C440,220 480,300 580,270 C680,240 740,160 880,140 C1020,120 1060,200 1160,180 C1260,160 1320,120 1440,160 L1440,600Z" fill="#182840"/><path d="M0,600 L0,400 C140,370 220,310 360,300 C500,290 540,350 660,320 C780,290 840,230 980,220 C1120,210 1180,270 1300,260 L1440,290 L1440,600Z" fill="#122030"/></svg>
   </div>
 
-  <!-- VISA TAB -->
-  <div class="tab-panel" id="panel-visa">
-    <div class="section-header">
-      <h2>簽證比較</h2>
-      <p>台灣🇹🇼、香港🇭🇰、加拿大🇨🇦護照免簽天數、遠端工作 Remote Work 合法性、數位遊牧簽證 Digital Nomad Visa</p>
-    </div>
-    <div class="insights" style="margin-bottom:1rem">
-      <div class="insight-card good">
-        <h4>🇳🇿 紐西蘭：全球唯一明確允許</h4>
-        <p>2025/1/27 起，訪客簽證 visitor visa 可無限制遠端工作 remote work。92 天內免稅。三本護照都適用。</p>
+  <!-- Far forest -->
+  <div class="scene-layer layer-ff" data-speed="0.08">
+    <svg viewBox="0 0 1440 500" preserveAspectRatio="none"><path id="ff" fill="#142822"/><path id="ff2" fill="#12241e"/></svg>
+  </div>
+
+  <!-- Mid forest -->
+  <div class="scene-layer layer-mf" data-speed="0.14">
+    <svg viewBox="0 0 1440 450" preserveAspectRatio="none"><path id="mf" fill="#0c1a14"/><path id="mf2" fill="#0a1610"/></svg>
+  </div>
+
+  <!-- Cabin — mountain lodge, slight 3/4 -->
+  <div class="cabin-wrap" data-speed="0.2">
+    <svg viewBox="0 0 320 210" width="520">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <radialGradient id="wl"><stop offset="0%" stop-color="rgba(255,190,80,.35)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      </defs>
+      <!-- Ground light from windows -->
+      <ellipse cx="90" cy="194" rx="48" ry="14" fill="url(#wl)"/>
+      <ellipse cx="232" cy="194" rx="40" ry="12" fill="url(#wl)" opacity=".7"/>
+      <!-- Foundation -->
+      <rect x="28" y="180" width="248" height="8" rx="1" fill="#0e0c08"/>
+      <!-- Side wall (right, receding into depth) -->
+      <polygon points="272,86 310,76 310,174 272,180" fill="#1c1a16"/>
+      <!-- Side wall window -->
+      <polygon points="282,108 302,104 302,134 282,138" fill="rgba(255,210,115,.6)" filter="url(#glow)"/>
+      <polygon points="282,108 302,104 302,134 282,138" fill="none" stroke="#181410" stroke-width="1.2"/>
+      <!-- Main front wall -->
+      <rect x="32" y="86" width="240" height="94" rx="1" fill="#241e16"/>
+      <!-- Horizontal log lines -->
+      <g stroke="#261e14" stroke-width=".3" opacity=".35"><line x1="36" y1="100" x2="268" y2="100"/><line x1="36" y1="114" x2="268" y2="114"/><line x1="36" y1="128" x2="268" y2="128"/><line x1="36" y1="142" x2="268" y2="142"/><line x1="36" y1="156" x2="268" y2="156"/><line x1="36" y1="170" x2="268" y2="170"/></g>
+      <!-- Roof front slope -->
+      <polygon points="18,88 152,20 286,88" fill="#161210"/>
+      <!-- Roof side -->
+      <polygon points="286,88 310,78 152,10 152,20" fill="#111010"/>
+      <!-- Roof edges -->
+      <line x1="152" y1="20" x2="152" y2="10" stroke="#302818" stroke-width="1.5"/>
+      <line x1="18" y1="88" x2="286" y2="88" stroke="#241c14" stroke-width="1.5"/>
+      <line x1="152" y1="20" x2="18" y2="88" stroke="#241c14" stroke-width="1.2"/>
+      <line x1="152" y1="20" x2="286" y2="88" stroke="#241c14" stroke-width="1.2"/>
+      <line x1="152" y1="10" x2="310" y2="78" stroke="#1c1610" stroke-width=".8"/>
+      <line x1="286" y1="88" x2="310" y2="78" stroke="#1c1610" stroke-width=".8"/>
+      <!-- Left window — big, warm glow -->
+      <rect x="52" y="106" width="56" height="44" rx="2" fill="rgba(255,215,120,.95)" filter="url(#glow)"/>
+      <rect x="52" y="106" width="56" height="44" rx="2" fill="none" stroke="#181410" stroke-width="2.5"/>
+      <line x1="80" y1="106" x2="80" y2="150" stroke="#181410" stroke-width="2.5"/>
+      <line x1="52" y1="128" x2="108" y2="128" stroke="#181410" stroke-width="2.5"/>
+      <rect x="49" y="150" width="62" height="3" rx="1" fill="#1c1610"/>
+      <!-- Right window -->
+      <rect x="210" y="106" width="46" height="44" rx="2" fill="rgba(255,215,120,.88)" filter="url(#glow)"/>
+      <rect x="210" y="106" width="46" height="44" rx="2" fill="none" stroke="#181410" stroke-width="2.5"/>
+      <line x1="233" y1="106" x2="233" y2="150" stroke="#181410" stroke-width="2.5"/>
+      <line x1="210" y1="128" x2="256" y2="128" stroke="#181410" stroke-width="2.5"/>
+      <rect x="207" y="150" width="52" height="3" rx="1" fill="#1c1610"/>
+      <!-- Door -->
+      <rect x="130" y="132" width="44" height="48" rx="2" fill="#100c06"/>
+      <rect x="130" y="132" width="44" height="48" fill="none" stroke="#1e1814" stroke-width="1.8"/>
+      <line x1="141" y1="134" x2="141" y2="178" stroke="#161210" stroke-width=".5"/><line x1="152" y1="134" x2="152" y2="178" stroke="#161210" stroke-width=".5"/><line x1="163" y1="134" x2="163" y2="178" stroke="#161210" stroke-width=".5"/>
+      <circle cx="167" cy="158" r="2" fill="rgba(200,180,120,.3)"/>
+      <!-- Porch overhang + posts -->
+      <line x1="118" y1="130" x2="186" y2="130" stroke="#201810" stroke-width="2.5"/>
+      <rect x="120" y="130" width="3" height="50" fill="#181410"/><rect x="181" y="130" width="3" height="50" fill="#181410"/>
+      <!-- Steps -->
+      <rect x="126" y="180" width="52" height="4" rx="1" fill="#161008"/>
+      <rect x="122" y="184" width="60" height="4" rx="1" fill="#120e08"/>
+      <!-- Chimney (stone) -->
+      <rect x="202" y="2" width="22" height="54" fill="#1a1814" rx="1"/>
+      <rect x="198" y="-2" width="30" height="6" rx="2" fill="#201c16"/>
+      <line x1="202" y1="16" x2="224" y2="16" stroke="#221e18" stroke-width=".4"/><line x1="202" y1="30" x2="224" y2="30" stroke="#221e18" stroke-width=".4"/><line x1="202" y1="44" x2="224" y2="44" stroke="#221e18" stroke-width=".4"/>
+      <line x1="213" y1="4" x2="213" y2="54" stroke="#221e18" stroke-width=".3"/>
+      <!-- Smoke -->
+      <circle cx="213" cy="-4" r="4" fill="rgba(200,210,220,.06)"><animate attributeName="cy" values="-4;-55" dur="4.5s" repeatCount="indefinite"/><animate attributeName="r" values="4;18" dur="4.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".1;0" dur="4.5s" repeatCount="indefinite"/><animate attributeName="cx" values="213;228" dur="4.5s" repeatCount="indefinite"/></circle>
+      <circle cx="215" cy="-4" r="3" fill="rgba(200,210,220,.05)"><animate attributeName="cy" values="-4;-65" dur="5.5s" begin="1.5s" repeatCount="indefinite"/><animate attributeName="r" values="3;22" dur="5.5s" begin="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".08;0" dur="5.5s" begin="1.5s" repeatCount="indefinite"/><animate attributeName="cx" values="215;232" dur="5.5s" begin="1.5s" repeatCount="indefinite"/></circle>
+      <!-- Porch lantern -->
+      <rect x="149" y="124" width="5" height="6" rx="1" fill="rgba(255,210,110,.6)"/>
+      <circle cx="152" cy="127" r="8" fill="rgba(255,200,100,.08)"/>
+    </svg>
+  </div>
+
+  <!-- Campfire — bright organic SVG -->
+  <div class="fire-wrap" data-speed="0.2">
+    <svg viewBox="0 0 180 200" width="170" style="display:block;overflow:visible">
+      <defs>
+        <filter id="fBlur"><feGaussianBlur stdDeviation="3"/></filter>
+        <filter id="fGlow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="fGlow2"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <radialGradient id="fLight"><stop offset="0%" stop-color="rgba(255,150,50,.38)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      </defs>
+      <!-- Warm ground light -->
+      <ellipse cx="90" cy="188" rx="90" ry="22" fill="url(#fLight)" filter="url(#fBlur)"/>
+      <!-- Ambient fire glow (big, soft) -->
+      <ellipse cx="90" cy="120" rx="70" ry="60" fill="rgba(255,140,40,.06)" filter="url(#fGlow2)"/>
+      <!-- Stone ring -->
+      <g fill="#222" stroke="#2a2a2a" stroke-width=".4"><ellipse cx="22" cy="168" rx="12" ry="8"/><ellipse cx="48" cy="176" rx="10" ry="7"/><ellipse cx="74" cy="180" rx="9" ry="6"/><ellipse cx="100" cy="180" rx="10" ry="6"/><ellipse cx="126" cy="176" rx="10" ry="7"/><ellipse cx="152" cy="168" rx="12" ry="8"/></g>
+      <!-- Logs -->
+      <rect x="28" y="148" width="124" height="12" rx="6" fill="#3a2210" transform="rotate(-5 90 154)"/>
+      <rect x="28" y="148" width="124" height="12" rx="6" fill="#2a180a" transform="rotate(5 90 154)"/>
+      <rect x="48" y="152" width="84" height="10" rx="5" fill="#4a2a12"/>
+      <!-- Hot ember glow on logs -->
+      <ellipse cx="90" cy="152" rx="30" ry="8" fill="rgba(255,100,20,.2)"/>
+      <ellipse cx="90" cy="152" rx="16" ry="5" fill="rgba(255,160,50,.12)"/>
+      <!-- Main flame (tall, bright) -->
+      <path fill="rgba(255,170,45,.85)" filter="url(#fGlow)"><animate attributeName="d" dur="2.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" values="M90,152 Q66,110 72,68 Q80,28 90,8 Q100,28 108,68 Q114,110 90,152Z;M90,152 Q70,114 76,76 Q84,38 90,18 Q96,38 104,76 Q110,114 90,152Z;M90,152 Q66,110 72,68 Q80,28 90,8 Q100,28 108,68 Q114,110 90,152Z"/></path>
+      <!-- Bright white-yellow core -->
+      <path fill="rgba(255,235,160,.92)"><animate attributeName="d" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" values="M90,152 Q74,116 80,84 Q86,52 90,34 Q94,52 100,84 Q106,116 90,152Z;M90,152 Q78,120 82,90 Q88,60 90,42 Q92,60 98,90 Q102,120 90,152Z;M90,152 Q74,116 80,84 Q86,52 90,34 Q94,52 100,84 Q106,116 90,152Z"/></path>
+      <!-- Left tongue -->
+      <path fill="rgba(255,145,35,.65)"><animate attributeName="d" dur="2.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" values="M74,154 Q54,116 58,82 Q64,50 62,36 Q70,56 74,94 Q78,128 74,154Z;M74,154 Q58,120 62,90 Q68,60 66,44 Q72,62 76,98 Q78,132 74,154Z;M74,154 Q54,116 58,82 Q64,50 62,36 Q70,56 74,94 Q78,128 74,154Z"/></path>
+      <!-- Right tongue -->
+      <path fill="rgba(255,145,35,.65)"><animate attributeName="d" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" values="M106,154 Q126,116 122,82 Q116,50 118,36 Q110,56 106,94 Q102,128 106,154Z;M106,154 Q122,120 118,90 Q112,60 114,44 Q108,62 104,98 Q102,132 106,154Z;M106,154 Q126,116 122,82 Q116,50 118,36 Q110,56 106,94 Q102,128 106,154Z"/></path>
+      <!-- Outer flickers -->
+      <path fill="rgba(255,125,25,.4)"><animate attributeName="d" dur="1.8s" repeatCount="indefinite" values="M62,156 Q46,130 50,102 Q56,78 54,64 Q60,82 62,112 Q64,138 62,156Z;M62,156 Q50,134 54,108 Q58,84 56,72 Q62,88 64,116 Q64,142 62,156Z;M62,156 Q46,130 50,102 Q56,78 54,64 Q60,82 62,112 Q64,138 62,156Z"/></path>
+      <path fill="rgba(255,125,25,.4)"><animate attributeName="d" dur="1.6s" repeatCount="indefinite" values="M118,156 Q134,130 130,102 Q124,78 126,64 Q120,82 118,112 Q116,138 118,156Z;M118,156 Q130,134 126,108 Q122,84 124,72 Q118,88 116,116 Q116,142 118,156Z;M118,156 Q134,130 130,102 Q124,78 126,64 Q120,82 118,112 Q116,138 118,156Z"/></path>
+      <!-- Bright sparks -->
+      <circle r="2.2" fill="#ffbb60"><animate attributeName="cx" values="86;74" dur="3s" repeatCount="indefinite"/><animate attributeName="cy" values="110;15" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="3s" repeatCount="indefinite"/><animate attributeName="r" values="2.2;.4" dur="3s" repeatCount="indefinite"/></circle>
+      <circle r="1.8" fill="#ffaa50"><animate attributeName="cx" values="95;106" dur="3.5s" begin=".8s" repeatCount="indefinite"/><animate attributeName="cy" values="105;5" dur="3.5s" begin=".8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="3.5s" begin=".8s" repeatCount="indefinite"/><animate attributeName="r" values="1.8;.3" dur="3.5s" begin=".8s" repeatCount="indefinite"/></circle>
+      <circle r="1.5" fill="#ffcc70"><animate attributeName="cx" values="88;78" dur="3.8s" begin="1.6s" repeatCount="indefinite"/><animate attributeName="cy" values="100;0" dur="3.8s" begin="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;0" dur="3.8s" begin="1.6s" repeatCount="indefinite"/><animate attributeName="r" values="1.5;.2" dur="3.8s" begin="1.6s" repeatCount="indefinite"/></circle>
+      <circle r="1.2" fill="#ffb060"><animate attributeName="cx" values="92;84" dur="2.8s" begin="2.2s" repeatCount="indefinite"/><animate attributeName="cy" values="108;10" dur="2.8s" begin="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0" dur="2.8s" begin="2.2s" repeatCount="indefinite"/><animate attributeName="r" values="1.2;.2" dur="2.8s" begin="2.2s" repeatCount="indefinite"/></circle>
+      <circle r="1" fill="#ffdd80"><animate attributeName="cx" values="82;90" dur="2.4s" begin="3s" repeatCount="indefinite"/><animate attributeName="cy" values="112;18" dur="2.4s" begin="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0" dur="2.4s" begin="3s" repeatCount="indefinite"/><animate attributeName="r" values="1;.2" dur="2.4s" begin="3s" repeatCount="indefinite"/></circle>
+    </svg>
+    <div class="fire-glow"></div>
+  </div>
+
+  <!-- Person sitting by campfire -->
+  <div style="position:absolute;bottom:5vh;left:calc(44% + 360px);z-index:8;pointer-events:none;transform:translateZ(50px)">
+    <svg width="115" height="165" viewBox="0 0 58 84">
+      <defs><filter id="pGlow"><feGaussianBlur stdDeviation="3"/></filter></defs>
+      <!-- Warm backlight -->
+      <ellipse cx="16" cy="42" rx="24" ry="34" fill="rgba(255,140,40,.07)" filter="url(#pGlow)"/>
+      <!-- Log seat -->
+      <rect x="4" y="56" width="44" height="10" rx="5" fill="#3a2e18"/>
+      <ellipse cx="4" cy="61" rx="5" ry="5" fill="#342814" stroke="#4a3820" stroke-width=".4"/>
+      <ellipse cx="48" cy="61" rx="5" ry="5" fill="#342814" stroke="#4a3820" stroke-width=".4"/>
+      <!-- Person silhouette -->
+      <g fill="#1a2840">
+        <circle cx="27" cy="10" r="8"/>
+        <path d="M19,8 Q20,1.5 27,0.5 Q34,1.5 35,8"/>
+        <rect x="18.5" y="7.5" width="17" height="3" rx="1" fill="#203048"/>
+        <path d="M22,18 C20,24 18,34 18,52 L38,52 C38,36 36,26 34,18Z"/>
+        <path d="M20,26 C15,30 8,38 3,42 L6,47 L14,42 L22,32Z"/>
+        <path d="M1.5,40 L6,47 L3.5,49 L0,42Z"/>
+        <path d="M35,28 L42,46 L38,48 L32,32Z"/>
+        <path d="M18,52 L9,68 Q6,72 2,74 L12,74 Q16,70 18,66 L25,52Z"/>
+        <path d="M33,52 L42,68 Q45,72 49,74 L39,74 Q35,70 33,66 L28,52Z"/>
+      </g>
+      <!-- Fire rim light (.25 opacity — clearly visible) -->
+      <g fill="rgba(255,155,55,.25)">
+        <path d="M20,26 C15,30 8,38 3,42 L6,47 L14,42 L22,32Z"/>
+        <path d="M1.5,40 L6,47 L3.5,49 L0,42Z"/>
+        <path d="M22,18 C20,24 18,34 18,52 L24,52 C24,34 23,24 22,18Z"/>
+        <path d="M18,52 L9,68 Q6,72 2,74 L12,74 Q16,70 18,66 L25,52Z"/>
+        <path d="M19,10 C19,4 22,1 27,1 L27,19 C22,19 19,16 19,10Z"/>
+      </g>
+      <!-- Warm edge stroke -->
+      <path d="M20,18 C18,26 17,36 17,52 L9,68 Q6,72 2,74" fill="none" stroke="rgba(255,160,60,.2)" stroke-width="1.8"/>
+    </svg>
+  </div>
+
+  <!-- Near forest -->
+  <div class="scene-layer layer-nf" data-speed="0.28">
+    <svg viewBox="0 0 1440 500" preserveAspectRatio="none"><path id="nf" fill="#040a06"/><path id="nf2" fill="#030804"/></svg>
+  </div>
+
+  <!-- Fog -->
+  <div class="rain-mist"></div>
+  <div class="fog fog-1"></div><div class="fog fog-2"></div><div class="fog fog-3"></div>
+  <div class="hero__wglow"></div>
+  <div class="hero__fglow"></div>
+  <div class="hero__ground"></div>
+  </div><!-- /scene-3d -->
+
+  <div class="hero__content">
+    <h1 class="hero__name">Jerry Lin</h1>
+    <p class="hero__role">Software Engineer at <span>Microsoft</span></p>
+    <div class="hero__cta"><a href="#about" class="btn btn--warm">Explore</a><a href="assets/resume.pdf" target="_blank" class="btn btn--glass">Resume</a></div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-mouse"></div></div>
+</section>
+<canvas id="weatherCanvas"></canvas>
+
+<!-- ===== CONTENT ===== -->
+<section class="section" id="about"><div class="container">
+  <div class="sec-label reveal">About</div>
+  <h2 class="sec-heading reveal">Code by day, <em>campfire</em> by night.</h2>
+  <div class="about-grid glass">
+    <div class="about-photo reveal"><img src="assets/headshot.jpg" alt="Jerry Lin" loading="lazy"></div>
+    <div>
+      <div class="about-text reveal">
+        <p><strong>Chia-Wei (Jerry) Lin</strong> — I write code at Microsoft, but what I really do is make things disappear. Unnecessary middleware, slow sync jobs, layers of complexity no one asked for — I strip them away so the systems underneath can breathe.</p>
+        <p>Before this, startups in Toronto and Silicon Valley taught me that elegant code is code you never notice. You ship the feature, not the complexity. BASc from Bellevue College, but the real education never stopped.</p>
+        <p>After hours: espresso dialed to the gram, rain on a tent roof, fog rolling through valleys, and a quiet conviction that the best investments are the ones you can hold through winter.</p>
       </div>
-      <div class="insight-card">
-        <h4>🇬🇧 英國：附帶條件允許</h4>
-        <p>2024/1/31 起，訪客可為海外雇主遠端工作 remote work，但不能是入境的「主要目的」。6 個月免簽。</p>
-      </div>
-      <div class="insight-card warn">
-        <h4>⚠️ 申根 90/180 規則</h4>
-        <p>所有申根國共用 90 天配額（180 天滾動計算）。法國 France 已明確禁止訪客簽證遠端工作。</p>
-      </div>
-      <div class="insight-card warn">
-        <h4>⚠️ 香港護照注意</h4>
-        <p>香港特區 HK SAR 護照進美國需 B1/B2 簽證（USD $435）。歐洲旅行資訊及授權系統 ETIAS 上線後，英國國民（海外）護照 BNO 將失去申根免簽。</p>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>國家/地區</th>
-            <th>🇹🇼 台灣護照</th>
-            <th>🇭🇰 香港護照</th>
-            <th>🇨🇦 加拿大護照</th>
-            <th>遠端工作 Remote Work</th>
-            <th>數位遊牧簽 DN Visa</th>
-          </tr>
-        </thead>
-        <tbody id="visaBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- COST TAB -->
-  <div class="tab-panel" id="panel-cost">
-    <div class="section-header">
-      <h2>每月生活成本（USD）</h2>
-      <p>含租房、飲食、交通、共享工作空間 coworking、網路。舒適但不奢侈的水準。來源：Numbeo, NomadList, Expatistan</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="budget">月總預算</th>
-            <th data-col="rent">租房 (1BR)</th>
-            <th>飲食</th>
-            <th>交通</th>
-            <th>共享空間 Coworking</th>
-            <th>網速 Mbps</th>
-            <th>英語友善</th>
-          </tr>
-        </thead>
-        <tbody id="costBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-    <!-- FOOD TAB -->
-  <div class="tab-panel" id="panel-food">
-    <div class="section-header">
-      <h2>飲食文化 Food & Dining</h2>
-      <p>各城市必吃美食、街頭小吃、市場、餐廳推薦、飲食特色。點擊城市查看完整美食指南。</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="tscore">旅遊分數</th>
-            <th>代表美食</th>
-            <th>夜生活</th>
-            <th>飲食特色</th>
-          </tr>
-        </thead>
-        <tbody id="foodBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- HEALTHCARE TAB -->
-  <div class="tab-panel" id="panel-healthcare">
-    <div class="section-header">
-      <h2>醫療品質與可及性</h2>
-      <p>Numbeo 醫療指數 Healthcare Index、外國人就醫費用、英語醫生可用性、藥局便利度</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="health">醫療指數</th>
-            <th data-col="gp">門診費用</th>
-            <th>急診費用 (USD)</th>
-            <th>英語醫生</th>
-            <th>藥局便利</th>
-            <th>旅遊保險</th>
-          </tr>
-        </thead>
-        <tbody id="healthBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- WEALTH & EDUCATION TAB -->
-  <div class="tab-panel" id="panel-wealth">
-    <div class="section-header">
-      <h2>當地富裕程度與教育資源 Wealth & Education</h2>
-      <p>各國人均 GDP、平均薪資、頂級大學、語言學校、數位遊牧社群規模</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="gdp">人均 GDP</th>
-            <th data-col="salary">平均月薪</th>
-            <th>富裕程度</th>
-            <th>頂級大學</th>
-            <th>語言學校</th>
-            <th>Nomad 社群</th>
-            <th>教育分數</th>
-          </tr>
-        </thead>
-        <tbody id="wealthBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- TOURISM TAB -->
-  <div class="tab-panel" id="panel-tourism">
-    <div class="section-header">
-      <h2>旅遊資源（極度詳細）Tourism Resources</h2>
-      <p>景點、自然、美食、夜生活、一日遊、文化體驗、季節活動、獨特體驗。點擊任一城市查看完整詳情。</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th data-col="tscore">旅遊分數</th>
-            <th>必訪景點（前3）</th>
-            <th>美食亮點</th>
-            <th>最佳一日遊</th>
-            <th>獨特體驗</th>
-          </tr>
-        </thead>
-        <tbody id="tourismBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- PRACTICAL TAB -->
-  <div class="tab-panel" id="panel-practical">
-    <div class="section-header">
-      <h2>實用資訊</h2>
-      <p>插座、自來水、小費、支付方式、語言等日常生活必知事項</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>城市</th>
-            <th>插座</th>
-            <th>自來水</th>
-            <th>小費文化</th>
-            <th>刷卡友善</th>
-            <th>生活便利</th>
-            <th>最佳月份</th>
-          </tr>
-        </thead>
-        <tbody id="practicalBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- CHARTS TAB -->
-  <div class="tab-panel" id="panel-charts">
-    <div class="section-header">
-      <h2>圖表分析 Visual Analytics</h2>
-      <p>多維度互動式圖表，幫你快速比較所有目的地</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
-      <!-- Chart 1: Safety vs Cost Scatter -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">治安 vs 月成本 Safety vs Monthly Cost</h3>
-        <div style="position:relative;height:400px"><canvas id="chartScatter"></canvas></div>
-      </div>
-
-      <!-- Chart 2: Overall Score Top 20 -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">綜合評分前 20 名 Top 20 Overall Score</h3>
-        <div style="position:relative;height:400px"><canvas id="chartTopOverall"></canvas></div>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
-      <!-- Chart 3: Cost Breakdown -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">月成本結構比較 Cost Breakdown (USD/月)</h3>
-        <div style="position:relative;height:500px"><canvas id="chartCostBreakdown"></canvas></div>
-      </div>
-
-      <!-- Chart 4: Radar Top 6 -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">六維雷達圖：Jerry 的最佳選擇 Radar: Jerry's Top Picks</h3>
-        <div style="position:relative;height:500px"><canvas id="chartRadar"></canvas></div>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
-      <!-- Chart 5: Timezone vs Overall -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">時差 vs 綜合評分 Timezone Offset vs Overall</h3>
-        <div style="position:relative;height:400px"><canvas id="chartTZ"></canvas></div>
-      </div>
-
-      <!-- Chart 6: Safety by Region -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <h3 style="font-size:0.95rem;margin-bottom:0.8rem;color:var(--accent)">各地區治安分布 Safety Distribution by Region</h3>
-        <div style="position:relative;height:400px"><canvas id="chartRegionSafety"></canvas></div>
+      <div class="about-meta reveal">
+        <div class="meta-item"><span class="label">Based in</span><span class="value">Vancouver, BC</span></div>
+        <div class="meta-item"><span class="label">Work</span><span class="value">Microsoft · BPA</span></div>
+        <div class="meta-item"><span class="label">From</span><span class="value">Nantou, Taiwan</span></div>
       </div>
     </div>
   </div>
+</div></section>
 
-  <!-- INSIGHTS TAB -->
-  <div class="tab-panel" id="panel-insights">
-    <div class="section-header">
-      <h2>你該知道的事</h2>
-      <p>整合所有研究後，針對你的情況（微軟 Microsoft 軟體工程師 SDE、台灣/香港/加拿大護照、預計 6-7 月搬遷至雷德蒙德 Redmond）的重要提醒</p>
-    </div>
-    <div class="insights">
-      <div class="insight-card warn">
-        <h4>⚠️ Microsoft 跨國 Remote Work 政策</h4>
-        <p>出發前<strong>務必</strong>跟主管 manager 和全球人力調度團隊 Global Mobility team 確認。部分事業單位 BU 允許每年 30 天海外工作，部分只有 14 天。未經許可可能觸發稅務問題甚至解僱。</p>
-      </div>
-      <div class="insight-card warn">
-        <h4>⚠️ 稅務風險：Permanent Establishment</h4>
-        <p>如果你在某國工作超過 183 天，可能被視為稅務居民。即使短於 183 天，微軟 Microsoft 可能被認定在該國有「常設機構 Permanent Establishment」。2025 經合組織 OECD 更新了 50% 工作時間門檻。1-3 個月通常安全，但要記錄。</p>
-      </div>
-      <div class="insight-card warn">
-        <h4>⚠️ 日本藥品管制極嚴</h4>
-        <p>Adderall（安非他命類）、含偽麻黃鹼 pseudoephedrine 的感冒藥、部分過敏藥在日本是違禁品。處方藥最多帶 1 個月份量、非處方藥 OTC 最多 2 個月。入境前務必查「藥監證明 yakkan shoumei」（藥物進口證明）。</p>
-      </div>
-      <div class="insight-card good">
-        <h4>✅ 日圓歷史低點</h4>
-        <p>159 JPY/USD 是數十年低點。日本的 cost-performance 從未如此好。福岡月花費 $1,400、大阪 $1,900，搭配世界頂級的治安和食物。</p>
-      </div>
-      <div class="insight-card good">
-        <h4>✅ 紐西蘭全球最友善</h4>
-        <p>2025/1/27 起全球唯一明確允許訪客簽證 visitor visa 無限制遠端工作 remote work，92 天內免繳當地所得稅。但時差 +21hr 幾乎不可能同步工作。</p>
-      </div>
-      <div class="insight-card">
-        <h4>🎯 台灣數位遊牧簽（2025 年啟動）</h4>
-        <p>最長 2 年。26 歲以下只需年收入 USD $20K。超過 90 天觸發 18% 固定稅率。你的中文能力在台灣是巨大優勢。</p>
-      </div>
-      <div class="insight-card warn">
-        <h4>⚠️ 東亞旅客在歐美的安全</h4>
-        <p>英國 UK：45% 東亞/東南亞裔 ESEA 經歷仇恨犯罪。巴黎 Paris / 羅馬 Rome / 巴塞隆納 Barcelona：有組織扒竊集團專門鎖定東亞遊客。美國 USA：反亞裔仇恨犯罪仍是疫情前 3 倍。使用防盜包、不露財、保持警覺。</p>
-      </div>
-      <div class="insight-card">
-        <h4>🗺️ 申根 90 天用完的「跳板」策略</h4>
-        <p>申根 Schengen 90 天用完後，可轉往非申根國繼續：英國 UK（6 個月）、愛爾蘭 Ireland（3 個月）、阿爾巴尼亞 Albania（3 個月）、蒙特內哥羅 Montenegro（3 個月）、喬治亞 Georgia（加拿大護照 1 年）。各自獨立計算。</p>
-      </div>
-      <div class="insight-card good">
-        <h4>🏆 Jerry 的最佳選擇</h4>
-        <p><strong>歐洲首選</strong>：里斯本 Lisbon — 成本適中($2,400)、治安好、頂級 nomad 社群、D8 簽證。<br><strong>東歐寶石</strong>：盧比安納 Ljubljana — 安全指數78.5、便宜($1,900)、Lake Bled 人間仙境。<br><strong>亞洲首選</strong>：福岡 Fukuoka — 日圓低、治安極佳、食物世界級、成本低($1,400)。<br><strong>新家</strong>：雷德蒙德 Redmond — 零時差、免稅州、Microsoft Campus。</p>
-      </div>
-    </div>
+<section class="section" id="experience"><div class="container">
+  <div class="sec-label reveal">Experience</div>
+  <h2 class="sec-heading reveal">Where I've <em>built</em> things.</h2>
+  <div class="exp-grid">
+    <div class="exp-card glass reveal d1"><div class="exp-top"><span class="exp-company">Microsoft</span><span class="exp-date">Oct 2024 – Present</span></div><div class="exp-role">Software Engineer</div><ul class="exp-desc"><li>Eliminated Dataverse middleware — streamlined F&O → Data Lake architecture</li><li>Shipped Tables in the Lake — 30% faster sync, 1+ hour shorter install</li><li>Built Copilot Studio API integration for real-time road closure data</li></ul></div>
+    <div class="exp-card glass reveal d2"><div class="exp-top"><span class="exp-company">Alibi</span><span class="exp-date">Aug – Nov 2023</span></div><div class="exp-role">Full-Stack Developer Intern</div><ul class="exp-desc"><li>Built promoter group system with atomic CRUD across owner & promoter views</li><li>Designed anonymous-to-full user elevation flow and Firestore data models</li><li>Expanded Firestore security rules with read/write validation</li></ul></div>
+    <div class="exp-card glass reveal d3"><div class="exp-top"><span class="exp-company">Altomni</span><span class="exp-date">Sep 2022 – Mar 2023</span></div><div class="exp-role">SDE Intern</div><ul class="exp-desc"><li>Designed tree-structure customer journey data models for MySQL</li><li>Implemented workflow task scheduling and execution via Redis</li><li>Built Shopify webhooks for real-time customer event processing</li></ul></div>
+  </div>
+</div></section>
 
-    <div class="sources">
-      <h3>資料來源</h3>
-      <ul>
-        <li>全球和平指數 Global Peace Index 2025 — 經濟與和平研究所 Institute for Economics & Peace</li>
-        <li>Numbeo 安全指數 Safety Index / 生活成本 Cost of Living / 醫療指數 Healthcare Index 2025-2026</li>
-        <li>數位遊牧城市排名 Nomad List — Digital Nomad City Rankings</li>
-        <li>Expatistan 生活成本比較 Cost of Living Comparisons</li>
-        <li>世界衛生組織 WHO 全民健康覆蓋指數 Universal Health Coverage Index</li>
-        <li>停止仇恨亞太裔 Stop AAPI Hate 報告 2024-2025</li>
-        <li>英國政府仇恨犯罪統計 UK Government Hate Crime Statistics（截至 2025 年 3 月）</li>
-        <li>美國刑事司法委員會 US Council on Criminal Justice — 2025 年度犯罪趨勢 Crime Trends</li>
-        <li>歐盟委員會 European Commission — 歐洲旅行授權系統 ETIAS / 申根簽證政策 Schengen Visa Policy</li>
-        <li>各國官方移民局網站（外交部領事事務局 BOCA, 入境事務處 IMMD, 加拿大移民局 IRCC 等）</li>
-        <li>紐西蘭移民局 NZ Immigration — 訪客簽證遠端工作 Remote Work on Visitor Visa (2025)</li>
-        <li>英國移民規則 UK Immigration Rules — 訪客遠端工作 Visitor Remote Work (2024)</li>
-        <li>經合組織 OECD 2025 常設機構 Permanent Establishment 更新</li>
-        <li>Speedtest 全球指數 Global Index — 網速排名 Internet Speed Rankings</li>
-        <li>IQAir 世界空氣品質報告 World Air Quality Report 2025</li>
-        <li>日本外務省 Japan MOFA — 數位遊牧簽證 Digital Nomad Visa</li>
-        <li>泰國目的地簽證 Thailand DTV — Destination Thailand Visa</li>
-        <li>英語能力指數 EF English Proficiency Index 2025</li>
-      </ul>
+<section class="section" id="skills"><div class="container">
+  <div class="sec-label reveal">Skills</div>
+  <h2 class="sec-heading reveal">Tools of the <em>trade</em>.</h2>
+  <div class="skill-wrap reveal">
+    <div class="sk glass">Python</div><div class="sk glass">C#</div><div class="sk glass">Java</div><div class="sk glass">JavaScript</div><div class="sk glass">SQL</div>
+    <div class="sk glass">React</div><div class="sk glass">Node.js</div><div class="sk glass">ASP.NET</div>    <div class="sk glass">MySQL</div><div class="sk glass">MSSQL</div><div class="sk glass">MongoDB</div><div class="sk glass">Git</div>
+  </div>
+</div></section>
+
+<section class="section" id="interests"><div class="container">
+  <div class="sec-label reveal">Beyond Code</div>
+  <h2 class="sec-heading reveal">What keeps me <em>going</em>.</h2>
+  <div class="int-grid">
+    <div class="int-card glass reveal d1"><div class="int-card-bg" style="background-image:url('assets/coffee-illust.jpg')"></div><div class="int-card-overlay"></div><div class="int-card-content"><div class="int-icon">&#9749;</div><div class="int-title">Coffee</div><div class="int-desc">Obsessed with dialing in the perfect shot. The ritual of grinding, tamping, and pulling espresso is my daily meditation.</div><div class="int-tag">specialty espresso</div></div></div>
+    <div class="int-card glass reveal d2"><div class="int-card-bg" style="background-image:url('assets/camping-illustration.jpg')"></div><div class="int-card-overlay"></div><div class="int-card-content"><div class="int-icon">&#9968;</div><div class="int-title">Mountains & Rain</div><div class="int-desc">Fog rolling through valleys. Rain on a tent. Cool mountain air. Grew up camping in Taiwan, still chasing that feeling.</div><div class="int-tag">next: alps campervan</div></div></div>
+    <div class="int-card glass reveal d3"><div class="int-card-bg" style="background-image:url('assets/crypto-illust.jpg')"></div><div class="int-card-overlay"></div><div class="int-card-content"><div class="int-icon">&#9670;</div><div class="int-title">Crypto & DeFi</div><div class="int-desc">Long-term conviction investor. Deep in tokenomics, on-chain data, and real-world asset tokenization. Thesis over hype.</div><div class="int-tag">BTC · DeFi · RWA</div></div></div>
+  </div>
+</div></section>
+
+<section class="section" id="contact"><div class="container">
+  <div class="sec-label reveal">Contact</div>
+  <h2 class="sec-heading reveal" style="text-align:center">Let's talk.</h2>
+  <div class="contact-inner reveal">
+    <p>Software, crypto, coffee, or just say hi.</p>
+    <div class="contact-links">
+      <a href="mailto:chiawei.lin88@gmail.com" class="cl glass"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>
+      <a href="https://linkedin.com/in/jerryl99" target="_blank" class="cl glass"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>LinkedIn</a>
+      <a href="https://github.com/jerrylin1213" target="_blank" class="cl glass"><svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85v2.74c0 .27.16.59.67.5A10.02 10.02 0 0022 12 10 10 0 0012 2z"/></svg>GitHub</a>
+      <a href="assets/resume.pdf" target="_blank" class="cl glass"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>Resume</a>
     </div>
   </div>
-</div>
-
-<!-- Detail Modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modalContent">
-    <button class="close-btn" onclick="closeModal()">✕</button>
-    <div id="modalInner"></div>
-  </div>
-</div>
+</div></section>
+<footer><p>Jerry Lin &copy; 2026</p></footer>
 
 <script>
-// ============= DATA =============
-const cities = [
-  // ===== Jerry's Selected Destinations (25 cities) =====
-  // PORTUGAL
-  {city:"Lisbon",photoUrl:"https://images.unsplash.com/photo-1536663815808-535e2280d2c2?w=800&h=400&fit=crop",country:"Portugal",region:"europe",numbeoSafety:68.7,gpiRank:6,gpiScore:1.371,pettyTheft:"中等(28號電車/Baixa)",violentCrime:"低",eastAsianRisk:"低",scams:"餐廳超收/假毒品",avoidAreas:"Martim Moniz夜間, Intendente",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(D8, €3680/月)",monthlyBudget:2400,rent:1100,food:550,transport:45,coworking:200,internet:175,englishLevel:4,publicTransport:3.5,healthcareIndex:72.4,gpCost:45,erCost:200,englishDoctor:4,pharmacyAccess:5,timezone:"UTC+0",tzOffset:8,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:4,bestMonths:"4-6月, 9-11月",climate:"全年溫和 10-30°C，夏季炎熱",
-    gdpPerCapita:31415,avgSalary:1700,wealthLevel:"中",
-    topUnis:"里斯本大學 Universidade de Lisboa, Nova SBE (商學院全球50), Instituto Superior Técnico",
-    langSchools:"大量葡語學校(CIAL, Lusa Language School)，英語授課課程也多",nomadCommunity:"極大(全球前3 nomad hub)",educationScore:4,
-    attractions:"Alfama 阿爾法瑪老城區(迷宮般中世紀巷弄)｜Belém Tower 貝倫塔(UNESCO)｜Jerónimos Monastery 哲羅姆派修道院(UNESCO, 曼努埃爾式建築巔峰)｜Time Out Market 時代美食市場(全球最佳美食廣場)｜LX Factory 創意園區(書店/藝廊/餐廳)｜Tram 28 經典電車路線(穿越老城)｜São Jorge Castle 聖喬治城堡(全市制高點)｜Praça do Comércio 商業廣場(河岸大廣場)",
-    nature:"Sintra 辛特拉(童話般的宮殿群, UNESCO)｜Costa da Caparica 卡帕里卡海岸(衝浪)｜Arrábida 自然公園(清澈海灣)｜Tagus River 塔霍河岸步道騎行",
-    foodScene:"Pastéis de Nata 蛋撻(Pastéis de Belém 1837年創始店)｜Bacalhau 鹹鱈魚(據說有365種做法)｜海鮮(Cervejaria Ramiro 超人氣)｜Bifana 豬排三明治｜Time Out Market 集結全城最佳餐廳｜Ginjinha 櫻桃白蘭地(A Ginjinha 小店一杯€1.5)",
-    nightlife:"Bairro Alto 上城區(百家酒吧密集, 週四到六最熱鬧)｜Cais do Sodré 碼頭區(Pink Street, 夜店到天亮)｜LX Factory 週末活動｜Fado 法朵音樂(Alfama區傳統表演)",
-    dayTrips:"Sintra 辛特拉(40min火車, Pena Palace + Quinta da Regaleira, 必去)｜Cascais 卡斯凱什(30min火車, 海濱小鎮)｜Óbidos 奧比杜什(1hr, 中世紀城牆小鎮, 櫻桃酒)｜Setúbal 塞圖巴爾(1hr, 海豚觀賞)｜Évora 埃武拉(1.5hr, 人骨教堂, UNESCO)",
-    culture:"MAAT 藝術科技博物館｜Gulbenkian Museum 古爾本基安(世界級私人收藏)｜National Tile Museum 瓷磚博物館(葡萄牙Azulejo藝術)｜Fado 法朵(UNESCO非物質文化遺產)｜手工瓷磚工作坊",
-    seasonalEvents:"6月 Festas de Lisboa 里斯本節(沙丁魚烤肉+街頭派對)｜5-6月 Rock in Rio｜11月 Web Summit 全球科技大會｜12月 聖誕市集",
-    uniqueExp:"坐28號電車穿越Alfama｜在Alfama巷弄裡聽即興Fado｜站在Santa Justa Lift頂看全城紅屋頂｜Sintra一日穿越三座童話宮殿",
-    tourismScore:92,notes:"全球頂級 digital nomad 目的地。D8簽證。時區UTC+0適合跟美國同步。咖啡文化優秀。性價比高。"},
-  {city:"Porto",photoUrl:"https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=400&fit=crop",country:"Portugal",region:"europe",numbeoSafety:67.1,gpiRank:6,gpiScore:1.371,pettyTheft:"中等(觀光區)",violentCrime:"低",eastAsianRisk:"低",scams:"少",avoidAreas:"Sao Bento車站夜間",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(D8)",monthlyBudget:2000,rent:900,food:450,transport:40,coworking:180,internet:175,englishLevel:4,publicTransport:3,healthcareIndex:72,gpCost:40,erCost:180,englishDoctor:4,pharmacyAccess:5,timezone:"UTC+0",tzOffset:8,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:4,bestMonths:"4-10月",climate:"溫和，夏季偏涼（大西洋風）",
-    gdpPerCapita:31415,avgSalary:1500,wealthLevel:"中",
-    topUnis:"波多大學 Universidade do Porto (葡萄牙第一), Porto Business School",
-    langSchools:"葡語學校多(Fast Forward, CIAL Porto)",nomadCommunity:"大(成長中)",educationScore:3.5,
-    attractions:"Ribeira 河岸區(UNESCO)｜Dom Luís I Bridge 路易一世橋(雙層鐵橋, 可步行上層)｜Livraria Lello 萊羅書店(哈利波特靈感來源)｜São Bento Station 聖本篤車站(20,000片藍白瓷磚)｜Clérigos Tower 牧師塔(全市最高點)｜Vila Nova de Gaia 波特酒酒窖區(對岸)",
-    nature:"Douro Valley 杜羅河谷(UNESCO, 階梯式葡萄園)｜Matosinhos 海灘(衝浪+海鮮)｜Peneda-Gerês National Park 國家公園(2hr, 徒步)",
-    foodScene:"Francesinha 法蘭辛亞三明治(Porto獨有, 肉+起司+啤酒醬汁)｜波特酒 Port Wine(Graham's/Taylor's酒窖品酒)｜Bacalhau à Brás｜Matosinhos 海鮮燒烤街｜Mercado do Bolhão 傳統市場",
-    nightlife:"Galerias de Paris 酒吧街(十幾家酒吧密集)｜Rua de Cândido dos Reis｜波特酒酒窖品酒夕陽｜Live music in Ribeira",
-    dayTrips:"Douro Valley 杜羅河谷(1.5hr, 遊船+品酒, 必去)｜Braga 布拉加(1hr, Bom Jesus階梯教堂)｜Guimarães 吉馬良斯(1hr, 葡萄牙誕生地, UNESCO)｜Aveiro 阿威羅(1hr, 葡萄牙威尼斯)",
-    culture:"Serralves 當代藝術博物館(Rem Koolhaas設計)｜World of Wine (WOW) 波特酒體驗園區｜Azulejo 瓷磚藝術(整座城市都是)｜Fado do Porto",
-    seasonalEvents:"6月 São João 聖約翰節(全城瘋狂, 用塑膠鎚敲人頭, 葡萄牙最大節慶)｜9月 Festival de Outono",
-    uniqueExp:"在Gaia酒窖品70年波特酒｜搭遊船穿過杜羅河谷六座橋｜在Lello書店的紅色螺旋樓梯拍照｜São João節被陌生人用鎚子敲頭",
-    tourismScore:85,notes:"比Lisbon便宜。同樣D8簽證。優秀的食物和葡萄酒。"},
-  // NEW ZEALAND
-  {city:"Auckland",photoUrl:"https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=800&h=400&fit=crop",country:"New Zealand",region:"oceania",numbeoSafety:49.9,gpiRank:3,gpiScore:1.282,pettyTheft:"中等(景點車窗)",violentCrime:"低中",eastAsianRisk:"低",scams:"租車詐騙",avoidAreas:"South Auckland夜間",twVisa:"3個月(NZeTA ~$70)",hkVisa:"3個月(NZeTA)",caVisa:"3個月(NZeTA)",visaDays:90,remoteWork:"明確允許(2025起)",dnVisa:"不需要(visitor即可)",monthlyBudget:2800,rent:1400,food:650,transport:120,coworking:280,internet:155,englishLevel:5,publicTransport:3,healthcareIndex:69,gpCost:50,erCost:0,englishDoctor:5,pharmacyAccess:5,timezone:"UTC+13",tzOffset:21,plugType:"I (紐澳斜扁腳)",tapWater:"安全",tipping:"不需要",cardAcceptance:5,bestMonths:"12-3月(南半球夏季)",climate:"溫帶海洋性",
-    gdpPerCapita:49383,avgSalary:3200,wealthLevel:"高",
-    topUnis:"奧克蘭大學 University of Auckland (QS全球68), AUT, Massey University",
-    langSchools:"英語母語國，大量ESL學校",nomadCommunity:"中(成長中)",educationScore:4,
-    attractions:"Sky Tower 天空塔(328m, 可高空彈跳)｜Waiheke Island 懷赫科島(渡輪40min, 酒莊+海灘)｜Rangitoto Island 朗伊托托島(火山島健行)｜Auckland Art Gallery｜Viaduct Harbour 海港區｜Mission Bay 使命灣海灘｜Mount Eden 伊甸山(火山口全景)｜Ponsonby 精品街區",
-    nature:"Piha Beach 黑沙灘(衝浪聖地, 45min車程)｜Waitakere Ranges 雨林步道｜Hauraki Gulf 豪拉基灣(帆船/海豚)｜Coromandel Peninsula 科羅曼德半島(2hr, Cathedral Cove)｜Tongariro Alpine Crossing(4hr車程, 紐西蘭最佳一日健行)",
-    foodScene:"多元融合料理(太平洋島嶼+亞洲+歐洲)｜Ponsonby Rd 餐廳街｜La Cigale French Market 週六早市｜Fish & Chips at Mission Bay｜Flat White 咖啡文化(紐西蘭發明的)｜Britomart 美食區",
-    nightlife:"Ponsonby Rd 酒吧區｜Britomart 精釀啤酒｜Karangahape Rd (K Road) 另類夜生活｜Viaduct 海港酒吧",
-    dayTrips:"Hobbiton 哈比村(2hr, 魔戒影迷必去)｜Rotorua 羅托魯瓦(2.5hr, 地熱+毛利文化)｜Waitomo Caves 藍光蟲洞(2.5hr)｜Coromandel 科羅曼德(2hr, Cathedral Cove)｜Matakana 酒鄉(1hr)",
-    culture:"Auckland War Memorial Museum (毛利文化+自然史)｜Tāmaki Paenga Hira 博物館｜毛利Haka表演｜Street art in Karangahape",
-    seasonalEvents:"1-3月 夏季戶外音樂節｜2月 Auckland Lantern Festival 元宵燈節｜3月 Pasifika Festival 太平洋島嶼文化節｜11月 Diwali Festival",
-    uniqueExp:"Sky Tower 高空彈跳/高空漫步｜Hobbiton夕陽晚宴團｜Waiheke島一日品酒騎行｜Piha黑沙灘衝浪課｜夜間藍光蟲洞獨木舟",
-    tourismScore:82,notes:"全球唯一明確允許visitor visa remote work！92天內免稅。ACC意外保險涵蓋所有人。GPI第3。但+21hr時差幾乎不可能同步。"},
-  {city:"Wellington",photoUrl:"https://images.unsplash.com/photo-1589871973318-9ca1258faa5d?w=800&h=400&fit=crop",country:"New Zealand",region:"oceania",numbeoSafety:67.1,gpiRank:3,gpiScore:1.282,pettyTheft:"低",violentCrime:"低",eastAsianRisk:"低",scams:"少見",avoidAreas:"Courtney Place深夜(酒吧)",twVisa:"3個月(NZeTA)",hkVisa:"3個月(NZeTA)",caVisa:"3個月(NZeTA)",visaDays:90,remoteWork:"明確允許",dnVisa:"不需要",monthlyBudget:2500,rent:1200,food:600,transport:100,coworking:250,internet:155,englishLevel:5,publicTransport:3,healthcareIndex:68.2,gpCost:50,erCost:0,englishDoctor:5,pharmacyAccess:5,timezone:"UTC+13",tzOffset:21,plugType:"I (紐澳)",tapWater:"安全",tipping:"不需要",cardAcceptance:5,bestMonths:"12-3月",climate:"多風但溫和",
-    gdpPerCapita:49383,avgSalary:3100,wealthLevel:"高",
-    topUnis:"惠靈頓維多利亞大學 Victoria University of Wellington, Massey University Wellington",
-    langSchools:"英語系國家，ESL學校多",nomadCommunity:"小中",educationScore:3.5,
-    attractions:"Te Papa 國家博物館(免費, 世界級)｜Cuba Street 古巴街(波希米亞風, 咖啡館+街頭藝術)｜Wellington Cable Car 纜車(經典地標)｜Mount Victoria Lookout 全景觀景點｜Parliament Beehive 蜂巢國會大廈｜Zealandia 生態保護區(圍欄內的史前生態)",
-    nature:"Zealandia 野生動物保護區(奇異鳥!)｜Red Rocks 海豹棲息地(步道)｜Makara Peak MTB Park 登山車｜South Coast 海岸步道｜Rimutaka Cycle Trail",
-    foodScene:"精品咖啡之都(人均咖啡店全球最多)｜Hannahs Laneway 美食巷｜Willis St 餐廳區｜craft beer 精釀啤酒(Garage Project, ParrotDog)｜週日Harbourside Market",
-    nightlife:"Courtenay Place 酒吧街｜Cuba Street 現場音樂｜craft beer scene 極強｜San Fran 音樂場地",
-    dayTrips:"Wairarapa 葡萄酒區(1hr)｜Kapiti Island 鳥類保護區(1hr+渡輪)｜Castlepoint 海岸(2.5hr, 燈塔+化石)｜Martinborough 小酒鎮(1hr, Pinot Noir)",
-    culture:"Te Papa 國家博物館(毛利+紐西蘭歷史)｜Weta Workshop(魔戒特效工作室導覽)｜New Zealand Film Archive｜City Gallery Wellington｜毛利Marae參訪",
-    seasonalEvents:"2-3月 CubaDupa 街頭藝術節(Cuba St封街)｜6月 Matariki 毛利新年(2022起國定假日)｜10月 NZ International Film Festival｜11月 World of WearableArt (WOW)",
-    uniqueExp:"Weta Workshop 魔戒幕後導覽(全球唯一)｜Zealandia夜間導覽看奇異鳥Kiwi｜Wellington Cable Car + Botanic Garden 半日遊｜Matariki毛利新年慶典",
-    tourismScore:72,notes:"紐西蘭首都。比Auckland安全。咖啡文化優秀。compact城市。同樣remote work友善。但時差問題同Auckland。"},
-  // CZECH REPUBLIC
-  {city:"Prague",photoUrl:"https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=400&fit=crop",country:"Czech Republic",region:"europe",numbeoSafety:75.5,gpiRank:10,gpiScore:1.435,pettyTheft:"中高(老城/查理橋)",violentCrime:"低",eastAsianRisk:"低",scams:"計程車/換匯/觀光酒吧",avoidAreas:"Zizkov夜間",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無(Zivno可用)",monthlyBudget:2000,rent:900,food:500,transport:22,coworking:180,internet:160,englishLevel:4,publicTransport:4.5,healthcareIndex:74.8,gpCost:25,erCost:100,englishDoctor:4,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/E (歐規)",tapWater:"安全",tipping:"10%",cardAcceptance:4,bestMonths:"4-10月",climate:"大陸性，四季分明",
-    gdpPerCapita:35161,avgSalary:1800,wealthLevel:"中高",
-    topUnis:"查理大學 Charles University (1348, 中歐最古老)，Czech Technical University, University of Economics Prague",
-    langSchools:"捷克語學校多(Czech Language Training)，大量英語授課碩士",nomadCommunity:"極大(歐洲前5)",educationScore:4,
-    attractions:"Prague Castle 布拉格城堡(全球最大古城堡群)｜Charles Bridge 查理大橋(30座巴洛克雕像)｜Old Town Square 老城廣場(天文鐘每小時報時)｜St. Vitus Cathedral 聖維特主教座堂｜Lennon Wall 乘儂牆｜Dancing House 跳舞的房子｜Josefov 猶太區(六座猶太會堂)｜Vyšehrad 高堡(比Prague Castle少人)",
-    nature:"Petřín Hill 佩特任山(迷你艾菲爾鐵塔+纜車)｜Divoká Šárka 峽谷(市內野游)｜Letná Park 萊特納公園(啤酒花園+全景)｜Bohemian Switzerland National Park(2hr, Pravčická brána天然拱門)",
-    foodScene:"Trdelník 煙囪捲(爭議性觀光甜點)｜Svíčková 燉牛肉配餃子(國菜)｜Vepřo-knedlo-zelo 烤豬肉+餃子+酸菜｜Lokál 連鎖(正宗捷克料理)｜啤酒文化(人均啤酒消費全球第一! Pilsner Urquell, Staropramen)｜Náplavka 河岸農夫市場(週六)",
-    nightlife:"5層地下酒吧 Karlovy Lázně(歐洲最大夜店)｜Cross Club(工業風techno, 必去)｜Žižkov 區(布拉格最多酒吧的區, 據說人均酒吧數全球最高)｜Craft beer revolution(BeerGeek, Vinohradský Pivovar)",
-    dayTrips:"Český Krumlov 克魯姆洛夫(3hr, UNESCO, 童話小鎮, 必去)｜Kutná Hora 庫特納霍拉(1hr, 人骨教堂)｜Karlovy Vary 卡羅維瓦利(2hr, 溫泉小鎮)｜Pilsen 皮爾森(1hr, Pilsner Urquell啤酒廠)｜Terezín 特雷津(1hr, 二戰集中營紀念館)",
-    culture:"國家美術館 National Gallery｜DOX 當代藝術中心｜Kafka Museum 卡夫卡博物館｜Mucha Museum 慕夏博物館｜Prague 黑光劇(獨創劇種)｜布拉格之春古典音樂節",
-    seasonalEvents:"5-6月 Prague Spring 布拉格之春國際音樂節｜12月 Old Town Christmas Market(全歐最美聖誕市集之一)｜9月 Signal Festival 燈光藝術節｜10月 啤酒節",
-    uniqueExp:"在查理大橋日出無人時段散步(6AM前)｜Žižkov酒吧馬拉松(一晚走10家)｜Bohemian Switzerland拍Narnia場景｜在Náplavka河岸喝Svařák(熱紅酒)看日落",
-    tourismScore:93,notes:"GPI前10。月票$22極便宜。用Bolt不要叫計程車。銀行換匯不要用路邊亭。頂級nomad hub。"},
-  // CROATIA
-  {city:"Zagreb",photoUrl:"https://images.unsplash.com/photo-1558383817-55f4a1564647?w=800&h=400&fit=crop",country:"Croatia",region:"europe",numbeoSafety:78.6,gpiRank:17,gpiScore:1.519,pettyTheft:"低",violentCrime:"極低",eastAsianRisk:"低",scams:"少見",avoidAreas:"無",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(€2540/月, 免稅, 18個月)",monthlyBudget:1700,rent:750,food:400,transport:40,coworking:150,internet:145,englishLevel:4,publicTransport:3,healthcareIndex:74.5,gpCost:25,erCost:100,englishDoctor:4,pharmacyAccess:4,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:4,bestMonths:"5-9月",climate:"大陸性",
-    gdpPerCapita:26958,avgSalary:1300,wealthLevel:"中",
-    topUnis:"薩格勒布大學 University of Zagreb (1669, 東南歐最古老), Zagreb School of Economics and Management",
-    langSchools:"Croatian語學校有限，英語通用度高",nomadCommunity:"中(DN簽推動成長)",educationScore:3,
-    attractions:"Upper Town 上城區(Stone Gate, St. Mark's Church 馬賽克屋頂)｜Dolac Market 多拉茲市場(露天菜市場)｜Museum of Broken Relationships 失戀博物館(全球獨一無二)｜Zagreb Cathedral 大教堂(雙塔地標)｜Mirogoj Cemetery 米洛戈伊墓園(建築傑作)｜Tkalčićeva 街(咖啡酒吧一條街)",
-    nature:"Jarun Lake 雅倫湖(市內游泳/划船)｜Medvednica Mountain 梅德韋德尼察山(纜車+健行, 市區30min)｜Maksimir Park 大公園(動物園)｜Sljeme 滑雪場(冬季)",
-    foodScene:"Štrukli 起司捲(Zagreb特產)｜Ćevapi 烤肉卷｜Dolac Market 新鮮食材｜Tkalčićeva 街露天咖啡｜La Štruk(Štrukli專門店)｜Vinodol(傳統克羅埃西亞料理)｜精釀啤酒場景成長中",
-    nightlife:"Tkalčićeva 街(密集咖啡吧)｜Johann Franck 雞尾酒吧｜Swanky Monkey Garden(屋頂酒吧)｜夏季戶外電影和音樂",
-    dayTrips:"Plitvice Lakes 十六湖國家公園(2hr, UNESCO, 16座階梯湖+瀑布, 必去)｜Samobor 薩莫博爾(30min, 奶油蛋糕kremšnita)｜Varaždin 瓦拉日丁(1.5hr, 巴洛克小鎮)｜Rastoke 水車村(2hr)｜Split/Dubrovnik(4-5hr, 可搭國內班機)",
-    culture:"Museum of Broken Relationships(全球唯一, 必去)｜Croatian National Theatre 國家劇院｜Zagreb Contemporary Art Museum｜Nikola Tesla Technical Museum",
-    seasonalEvents:"7-8月 Zagreb Summer Evenings 夏夜音樂節(Upper Town)｜12月 Advent in Zagreb(連續多年歐洲最佳聖誕市集)｜4月 ZagrebDox 紀錄片影展｜6月 INmusic Festival(湖中島音樂節)",
-    uniqueExp:"在歐洲最佳聖誕市集喝Kuhano Vino(熱酒)｜Plitvice十六湖一日遊(人間仙境)｜失戀博物館看全球心碎故事｜Medvednica山纜車到山頂看Zagreb全景",
-    tourismScore:78,notes:"歐洲數位遊牧簽門檻最低(€2540)。免當地所得稅。最長18個月。非常安全。Advent市集全歐第一。"},
-  // ESTONIA
-  {city:"Tallinn",photoUrl:"https://images.unsplash.com/photo-1560098211-28b413b6a4de?w=800&h=400&fit=crop",country:"Estonia",region:"europe",numbeoSafety:78.0,gpiRank:21,gpiScore:1.559,pettyTheft:"低",violentCrime:"極低",eastAsianRisk:"低",scams:"偶有計程車",avoidAreas:"Kopli, Lasnamae",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(1年, €4500/月)",monthlyBudget:2200,rent:1000,food:500,transport:40,coworking:200,internet:170,englishLevel:4.5,publicTransport:3.5,healthcareIndex:76,gpCost:35,erCost:150,englishDoctor:4.5,pharmacyAccess:4,timezone:"UTC+2",tzOffset:10,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:5,bestMonths:"5-9月",climate:"夏季15-22°C，冬季-5°C",
-    gdpPerCapita:34041,avgSalary:1800,wealthLevel:"中高",
-    topUnis:"塔林理工大學 TalTech, 塔林大學 Tallinn University, Estonian Business School",
-    langSchools:"Estonian語課程，大量英語環境(IT圈)",nomadCommunity:"大(e-Residency吸引)",educationScore:4,
-    attractions:"Old Town 老城(UNESCO, 保存最完好的中世紀城鎮之一)｜Toompea Castle 座堂山城堡｜Alexander Nevsky Cathedral 亞歷山大涅夫斯基主教座堂｜Telliskivi Creative City 創意園區(最潮街區)｜Lennusadam Maritime Museum 海事博物館(水上飛機港改建)｜KGB Museum(前KGB總部, 23樓密室)｜St. Olaf's Church 觀景台(老城全景)",
-    nature:"Lahemaa National Park 拉赫馬國家公園(1hr, 沼澤步道+莊園)｜Pirita Beach 海灘(市區15min)｜Nõmme Forest 城市森林｜Bog walking 沼澤木棧道健行(愛沙尼亞特色)｜冬季 -20°C 冰上釣魚",
-    foodScene:"Nordic-Estonian融合料理(NOA, Fotografiska餐廳)｜Black bread 黑麵包(國民食物)｜Kama (穀物粉甜點)｜Balti Jaama Turg 市場(美食+手工藝)｜Rataskaevu 16(老城最佳餐廳)｜Craft beer(Põhjala Brewery)",
-    nightlife:"Telliskivi 創意園區(週末活動+酒吧)｜St. Patrick's(愛爾蘭酒吧, 外國人聚點)｜Kalamaja 區新潮酒吧｜夏季戶外酒吧(白夜到凌晨不天黑)",
-    dayTrips:"Lahemaa National Park 拉赫馬(1hr, 沼澤+瀑布+蘇聯廢墟)｜Tartu 塔爾圖(2.5hr, 大學城, 愛沙尼亞文化首都)｜Haapsalu 哈普薩盧(1.5hr, 海濱溫泉小鎮)｜Helsinki 赫爾辛基(渡輪2hr, 芬蘭一日遊!)｜Pärnu 帕爾努(2hr, 夏季度假勝地)",
-    culture:"KUMU Art Museum(北歐最大藝術博物館之一)｜Fotografiska Tallinn(攝影博物館, 斯德哥爾摩分館)｜Estonian Open Air Museum(鄉村建築露天博物館)｜Song Festival Grounds(愛沙尼亞歌唱革命聖地)｜e-Estonia Showroom(數位政府展示)",
-    seasonalEvents:"6月 白夜(Midsummer, 幾乎不天黑)｜7月 Tallinn Music Week｜12月 Christmas Market 老城聖誕市集(歐洲最佳之一)｜11月 Black Nights Film Festival (PÖFF)",
-    uniqueExp:"e-Estonia Showroom體驗全球最先進數位政府｜Lahemaa沼澤木棧道日出健行｜從Tallinn搭渡輪到Helsinki一日遊｜冬季老城聖誕市集喝Glögi(熱酒)｜白夜凌晨2點還是亮的",
-    tourismScore:75,notes:"e-Residency計劃。數位基礎設施頂級。Crime Index僅23.8。性價比高。赫爾辛基渡輪2hr可一日遊。"},
-  // TAIWAN
-  {city:"Taipei",photoUrl:"https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&h=400&fit=crop",country:"Taiwan",region:"asia",numbeoSafety:83.8,gpiRank:36,gpiScore:1.730,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"無(本國)",scams:"極少",avoidAreas:"萬華深夜(輕微)",twVisa:"本國",hkVisa:"30天(入台證)",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(2年, $20K/年)",monthlyBudget:1800,rent:800,food:400,transport:30,coworking:150,internet:160,englishLevel:3,publicTransport:5,healthcareIndex:87.2,gpCost:20,erCost:60,englishDoctor:4,pharmacyAccess:5,timezone:"UTC+8",tzOffset:16,plugType:"A/B (同北美)",tapWater:"建議過濾",tipping:"無",cardAcceptance:3.5,bestMonths:"10-11月, 3-5月",climate:"亞熱帶，夏季炎熱潮濕",
-    gdpPerCapita:37827,avgSalary:1700,wealthLevel:"中高",
-    topUnis:"國立臺灣大學 NTU (QS全球69), 國立政治大學 NCCU, 臺灣科技大學 NTUST",
-    langSchools:"中文學習天堂(NTNU MTC 全球最大華語中心, TLI)",nomadCommunity:"中(2025 DN簽後成長)",educationScore:5,
-    attractions:"台北101(曾世界最高, 觀景台+跨年煙火)｜故宮博物院(世界四大博物館, 翠玉白菜)｜龍山寺(1738, 最古老廟宇)｜中正紀念堂(衛兵交接)｜西門町(潮流文化)｜大稻埕(迪化街, 文青+傳統混合)｜象山步道(101最佳拍攝點)｜北投溫泉(市區內溫泉)",
-    nature:"陽明山 Yangmingshan(花季2-3月, 溫泉, 步道)｜象山步道(20min登頂看101)｜猴硐貓村(1hr火車)｜東北角海岸(龍洞攀岩/浮潛)｜Maokong 貓空纜車(茶園)｜Wulai 烏來(溫泉+瀑布+泰雅族文化, 1hr)",
-    foodScene:"士林夜市(最大, 大餅包小餅/蚵仔煎)｜饒河街夜市(胡椒餅必吃)｜鼎泰豐 Din Tai Fung(全球最佳小籠包)｜永康街(芒果冰/牛肉麵)｜寧夏夜市(蚵仔煎/滷肉飯/雞肉飯)｜臭豆腐｜珍珠奶茶發源地(春水堂)｜早餐店文化(蛋餅/燒餅油條)",
-    nightlife:"信義區(夜店/高空酒吧, W Hotel/CE LA VI)｜師大夜市區(學生酒吧)｜大安區居酒屋文化｜啤酒吧(Zhangmen Brewing)｜KTV文化(好樂迪/錢櫃)",
-    dayTrips:"九份 Jiufen(1hr, 千與千尋靈感地, 山城茶館)｜平溪線 Pingxi(天燈, 十分瀑布)｜淡水 Tamsui(捷運終點, 老街+夕陽)｜北投溫泉(30min捷運)｜基隆廟口夜市(1hr, 海港美食)｜野柳地質公園(1hr, 女王頭)",
-    culture:"故宮博物院(中華文化至寶)｜華山1914文創園區｜松山文創園區｜國家兩廳院(音樂/戲劇)｜茶道體驗(貓空/九份)｜廟宇文化(拜拜/求籤/媽祖遶境)",
-    seasonalEvents:"2月 平溪天燈節(元宵)｜3月 陽明山花季(櫻花/海芋)｜6-7月 大稻埕夏日節(煙火)｜10月 台北白晝之夜(Nuit Blanche)｜12/31 台北101跨年煙火",
-    uniqueExp:"101觀景台看跨年煙火(全球最壯觀之一)｜平溪放天燈許願｜九份山城茶館品茶看海景｜凌晨3點的夜市(台灣獨有的深夜文化)｜北投溫泉路線(地熱谷→公共湯)",
-    tourismScore:90,notes:"全球醫療品質第一。你的中文=英語5/5。夜市便宜美食。但時差16小時對Redmond團隊幾乎不可能同步。金卡或數位遊牧簽可用。插座和北美相同。"},
-  // GERMANY
-  {city:"Munich",photoUrl:"https://images.unsplash.com/photo-1595867818082-083862f3d630?w=800&h=400&fit=crop",country:"Germany",region:"europe",numbeoSafety:79.4,gpiRank:18,gpiScore:1.533,pettyTheft:"低",violentCrime:"極低",eastAsianRisk:"低",scams:"少見",avoidAreas:"火車站深夜(輕微)",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(自由業者簽)",monthlyBudget:3000,rent:1500,food:600,transport:60,coworking:280,internet:170,englishLevel:4.5,publicTransport:5,healthcareIndex:72.4,gpCost:40,erCost:200,englishDoctor:4.5,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:3.5,bestMonths:"4-10月",climate:"夏季18-28°C，冬季-3到5°C",
-    gdpPerCapita:59925,avgSalary:3500,wealthLevel:"極高",
-    topUnis:"慕尼黑工業大學 TU Munich (QS全球28), 慕尼黑大學 LMU Munich (QS全球54), Max Planck Institutes",
-    langSchools:"Goethe-Institut 歌德學院(德語學習全球總部就在Munich), DID Deutsch-Institut",nomadCommunity:"中",educationScore:5,
-    attractions:"Marienplatz 瑪利亞廣場(新市政廳鐘琴, 每日11/12/17點)｜Englischer Garten 英國花園(比Central Park大, 可裸曬+衝浪)｜BMW Welt & Museum｜Residenz 王宮(巴伐利亞最大城市宮殿)｜Nymphenburg Palace 寧芬堡宮｜Frauenkirche 聖母教堂(洋蔥頂雙塔)｜Viktualienmarkt 傳統市場(1807年至今)｜Olympiapark 奧林匹克公園",
-    nature:"Englischer Garten(城市衝浪 Eisbach Wave!)｜Isar River 伊薩河畔(BBQ/游泳)｜Alps 阿爾卑斯山(1hr車程)｜Starnberger See 施塔恩貝格湖(30min S-Bahn)｜Zugspitze 楚格峰(德國最高峰, 2hr)",
-    foodScene:"Weißwurst 白香腸+甜芥末+Bretzel(早上10點前吃, 巴伐利亞傳統)｜Schweinshaxe 烤豬腳｜Hofbräuhaus 皇家啤酒屋(1589)｜Augustiner 啤酒(Munich最佳)｜Viktualienmarkt 美食攤｜啤酒花園文化(Biergarten, 可自帶食物只買啤酒)｜Käsespätzle 起司麵疙瘩",
-    nightlife:"Hofbräuhaus(觀光但值得一次)｜Kultfabrik/Optimolwerke 廢工廠夜店區｜Schwabing 學生酒吧區｜Harry Klein(techno)｜啤酒花園直到深夜(夏季)｜Jazz clubs in Haidhausen",
-    dayTrips:"Neuschwanstein Castle 新天鵝堡(2hr, 迪士尼城堡原型, 必去)｜Salzburg 薩爾茲堡(1.5hr火車, 莫札特故鄉)｜Dachau 達豪集中營(30min, 歷史教育)｜Garmisch-Partenkirchen(1.5hr, 滑雪/健行)｜Berchtesgaden 鷹巢(2hr, 希特勒別墅+國王湖)｜Zugspitze 楚格峰(2hr)",
-    culture:"Alte/Neue Pinakothek 老新繪畫陳列館(Dürer, Rubens)｜Deutsches Museum 德意志博物館(全球最大科技博物館)｜BMW Museum｜Bayerische Staatsoper 巴伐利亞國家歌劇院｜NS-Dokumentationszentrum 納粹歷史紀念館",
-    seasonalEvents:"9-10月 Oktoberfest 慕尼黑啤酒節(全球最大, 600萬人, 必去)｜12月 Christkindlmarkt 聖誕市集(Marienplatz)｜6-7月 Tollwood Festival(音樂+美食)｜1月 Starkbierfest 烈啤酒節",
-    uniqueExp:"Oktoberfest穿Lederhosen/Dirndl喝一公升啤酒｜Englischer Garten Eisbach Wave城市衝浪｜新天鵝堡+國王湖一日遊｜在百年啤酒花園喝Augustiner看阿爾卑斯山日落",
-    tourismScore:90,notes:"德國最安全大城市。Numbeo 79.4勝過很多北歐城市。注意德國出乎意料地依賴現金。"},
-  // SPAIN
-  {city:"Madrid",photoUrl:"https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&h=400&fit=crop",country:"Spain",region:"europe",numbeoSafety:72.1,gpiRank:22,gpiScore:1.578,pettyTheft:"中等(Sol/Gran Via)",violentCrime:"低",eastAsianRisk:"低中",scams:"中等",avoidAreas:"Lavapies夜間",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(€2850/月, Beckham法)",monthlyBudget:2400,rent:1100,food:550,transport:55,coworking:200,internet:180,englishLevel:3.5,publicTransport:4.5,healthcareIndex:79.9,gpCost:45,erCost:200,englishDoctor:3.5,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:4,bestMonths:"3-6月, 9-11月",climate:"大陸性，夏季極熱40°C+，冬季冷",
-    gdpPerCapita:38040,avgSalary:2200,wealthLevel:"中高",
-    topUnis:"馬德里康普頓斯大學 UCM, 馬德里自治大學 UAM, IE Business School (全球頂級商學院)",
-    langSchools:"西班牙語學習聖地(Don Quijote, AIL Madrid, International House)",nomadCommunity:"大",educationScore:4.5,
-    attractions:"Prado Museum 普拉多博物館(世界三大美術館)｜Retiro Park 麗池公園(水晶宮+划船)｜Royal Palace 皇宮(歐洲最大皇宮)｜Gran Vía 格蘭大道(馬德里百老匯)｜Plaza Mayor 主廣場｜Puerta del Sol 太陽門(西班牙公路零公里)｜Reina Sofía 索菲亞王后藝術中心(Guernica格爾尼卡)｜Temple of Debod 德波神殿(埃及神殿, 日落絕景)",
-    nature:"Casa de Campo 大公園(Madrid的中央公園)｜Sierra de Guadarrama(1hr, 健行/滑雪)｜Retiro Park 划船+散步｜El Escorial 皇家修道院花園",
-    foodScene:"Tapas文化(La Latina區週日tapas crawl是宗教儀式)｜Jamón Ibérico 伊比利火腿(Museo del Jamón)｜Cocido Madrileño 馬德里燉菜｜Churros con Chocolate(Chocolatería San Ginés, 1894, 凌晨排隊)｜Bocadillo de Calamares 魷魚三明治(Plaza Mayor旁)｜Mercado de San Miguel 聖米格爾市場",
-    nightlife:"全歐洲最晚的夜生活(晚餐10PM, 出門12AM, 夜店到6AM)｜Malasaña 馬拉薩尼亞(indie/hipster)｜Chueca 丘埃卡(LGBTQ+, 活力十足)｜La Latina(週日vermut文化)｜Kapital(7層樓夜店)｜Flamenco 佛朗明哥(Corral de la Morería, 全球最佳)",
-    dayTrips:"Toledo 托雷多(30min AVE, 三文化古城, UNESCO, 必去)｜Segovia 塞哥維亞(30min AVE, 羅馬水道橋+烤乳豬)｜El Escorial(1hr, 西班牙皇家修道院, UNESCO)｜Ávila 阿維拉(1.5hr, 完整中世紀城牆)｜Aranjuez 皇宮花園(1hr)",
-    culture:"Prado + Reina Sofía + Thyssen-Bornemisza 黃金三角博物館區｜Flamenco 佛朗明哥(UNESCO非物質文化遺產)｜Real Madrid Santiago Bernabéu 球場導覽｜El Rastro 跳蚤市場(週日)｜西班牙皇家劇院 Teatro Real",
-    seasonalEvents:"5月 San Isidro Festival 聖伊西德羅節(鬥牛+街頭慶典)｜6月 Madrid Pride(歐洲最大之一)｜1月 Reyes Magos 三王節遊行｜12月 聖誕燈飾(Gran Vía壯觀)｜9月 La Mercè 附近",
-    uniqueExp:"凌晨4點在San Ginés吃Churros con Chocolate｜La Latina週日tapas bar hopping｜看正宗Flamenco到落淚｜Toledo一日遊穿越三大宗教歷史｜Santiago Bernabéu看皇馬比賽",
-    tourismScore:95,notes:"比Barcelona安全得多。數位遊牧簽有Beckham法稅率24%。醫療品質高。晚餐10點開始是正常的。"},
-  // SLOVENIA
-  {city:"Ljubljana",photoUrl:"https://images.unsplash.com/photo-1569491991089-45faa7c8e7b1?w=800&h=400&fit=crop",country:"Slovenia",region:"europe",numbeoSafety:78.5,gpiRank:8,gpiScore:1.409,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"低",scams:"少見",avoidAreas:"無",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:1900,rent:850,food:500,transport:40,coworking:200,internet:155,englishLevel:4,publicTransport:3,healthcareIndex:76.2,gpCost:30,erCost:150,englishDoctor:4,pharmacyAccess:4,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:4,bestMonths:"5-9月",climate:"溫和",
-    gdpPerCapita:37178,avgSalary:1600,wealthLevel:"中高",
-    topUnis:"盧比安納大學 University of Ljubljana (斯洛維尼亞第一, QS全球前500)",
-    langSchools:"Slovenian語學校(Center za slovenščino), 英語通用度高",nomadCommunity:"小(成長中)",educationScore:3.5,
-    attractions:"Ljubljana Castle 盧比安納城堡(纜車上山, 全景)｜Triple Bridge 三重橋(Plečnik設計)｜Dragon Bridge 龍橋(城市象徵)｜Prešeren Square 普雷舍倫廣場｜Central Market 中央市場(河岸)｜Metelkova 梅特科瓦(前軍營改藝術區, 斯洛維尼亞版Christiania)｜Tivoli Park 蒂沃利公園",
-    nature:"Lake Bled 布萊德湖(1hr, 湖中教堂島, 阿爾卑斯山背景, 必去)｜Lake Bohinj 博欣湖(1.5hr, 比Bled更原始)｜Triglav National Park 特里格拉夫國家公園(健行天堂)｜Vintgar Gorge 峽谷(Bled附近)｜Soča River 索察河(翡翠綠, 泛舟/kayak)",
-    foodScene:"Kremšnita 奶油蛋糕(Bled特產)｜Štruklji 捲餅｜Kraški pršut 喀斯特火腿｜Open Kitchen 週五露天美食市集(Pogačarjev trg)｜Gostilna na Gradu(城堡餐廳)｜橘色葡萄酒(Orange Wine, 斯洛維尼亞特產)",
-    nightlife:"Metelkova 自治藝術區(另類, 每晚不同活動)｜河岸咖啡吧(夏季到深夜)｜Pritličje LGBTQ+ bar｜Cirkus Club",
-    dayTrips:"Lake Bled 布萊德湖(1hr, 絕對必去)｜Postojna Cave 波斯托伊納鐘乳石洞(45min, 全球最壯觀洞穴之一, 有洞穴火車)｜Škocjan Caves 什科茨揚洞穴群(UNESCO, 比Postojna更震撼)｜Piran 皮蘭(1.5hr, 地中海風情小鎮)｜Predjama Castle 洞窟城堡(Postojna附近, 建在懸崖洞穴裡)｜Soča Valley 索察河谷(2hr, 一戰遺跡+翡翠河)",
-    culture:"National Gallery 國家美術館｜Metelkova Museum Quarter 博物館區｜Plečnik House 建築師故居｜Slovenian Philharmonic(1701, 歐洲最古老之一)｜Open Kitchen 美食文化活動",
-    seasonalEvents:"6-9月 Ljubljana Festival(音樂戲劇舞蹈)｜12月 Festive Ljubljana 聖誕燈飾(整條河)｜4月 Dragon Carnival｜8月 Ana Desetnica 街頭劇場藝術節",
-    uniqueExp:"Lake Bled 划 Pletna 木船到湖中教堂敲許願鐘｜Postojna Cave 坐洞穴小火車深入地底｜Soča River翡翠河泛舟｜Predjama洞窟城堡探秘｜Friday Open Kitchen全城美食狂歡",
-    tourismScore:85,notes:"GPI全球第8。隱藏寶石。精緻小巧的首都。自然環境一流。Bled和Postojna是此行最大亮點。"},
-  // POLAND
-  {city:"Warsaw",photoUrl:"https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=800&h=400&fit=crop",country:"Poland",region:"europe",numbeoSafety:74.5,gpiRank:33,gpiScore:1.713,pettyTheft:"低中",violentCrime:"低",eastAsianRisk:"低",scams:"少",avoidAreas:"Praga夜間",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:1800,rent:800,food:450,transport:30,coworking:150,internet:165,englishLevel:4,publicTransport:4,healthcareIndex:57.9,gpCost:20,erCost:80,englishDoctor:3.5,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/E (歐規)",tapWater:"安全",tipping:"10%",cardAcceptance:4,bestMonths:"5-9月",climate:"大陸性",
-    gdpPerCapita:28485,avgSalary:1700,wealthLevel:"中",
-    topUnis:"華沙大學 University of Warsaw, 華沙理工大學 Warsaw University of Technology, SGH Warsaw School of Economics",
-    langSchools:"Polish語學校多, 英語在年輕世代很普及",nomadCommunity:"中",educationScore:4,
-    attractions:"Old Town 老城(UNESCO, 二戰後從廢墟完全重建)｜Royal Castle 皇家城堡(重建)｜Łazienki Park 瓦津基公園(水上宮殿+週日蕭邦音樂會)｜POLIN Museum 波蘭猶太人歷史博物館(世界級)｜Palace of Culture and Science 文化科學宮(史達林式摩天樓)｜Warsaw Uprising Museum 華沙起義博物館｜Copernicus Science Centre 哥白尼科學中心｜Praga 區(未被炸毀的原始街區, 街頭藝術)",
-    nature:"Łazienki Park(蕭邦雕像+孔雀)｜Vistula River 維斯瓦河岸(夏季沙灘酒吧)｜Kampinos National Park(30min, 原始森林)｜Kabaty Forest 城市森林",
-    foodScene:"Pierogi 波蘭餃子(必吃, Zapiecek連鎖)｜Żurek 酸麵粉湯(裝在麵包碗裡)｜Bigos 獵人燉菜｜Pączki 甜甜圈(Tłusty Czwartek肥胖星期四)｜Hala Koszyki 美食市場(翻新後超美)｜Milk Bars (Bar Mleczny, 社會主義時代食堂, 超便宜)｜伏特加文化(Polish vodka tasting)",
-    nightlife:"Pawilony 帕維洛尼(後院密集小酒吧群, 最酷聚點)｜Nowy Świat 新世界街(主流酒吧)｜Praga 區(underground場景)｜Smolna(頂級techno club)｜伏特加吧(Wódka Café)",
-    dayTrips:"Kraków 克拉科夫(2.5hr火車)｜Wieliczka Salt Mine 維利奇卡鹽礦(Kraków附近, UNESCO)｜Malbork Castle 馬爾堡城堡(2.5hr, 全球最大磚造城堡, UNESCO)｜Kazimierz Dolny 卡齊米日(2hr, 藝術家小鎮)｜Białowieża Forest 比亞沃維耶扎原始森林(4hr, 歐洲最後原始森林, 歐洲野牛)",
-    culture:"POLIN Museum(波蘭猶太人千年歷史, 震撼)｜Warsaw Uprising Museum(互動式二戰體驗)｜Chopin Museum 蕭邦博物館(互動式)｜Neon Museum 霓虹博物館(共產時代霓虹燈)｜Łazienki週日蕭邦露天音樂會(5-9月免費)",
-    seasonalEvents:"5-9月 Łazienki 蕭邦週日音樂會(免費)｜6月 Orange Warsaw Festival｜8月 Film Festival｜12月 聖誕市集(Old Town)｜2月 Tłusty Czwartek 肥胖星期四(全國吃甜甜圈日)",
-    uniqueExp:"POLIN博物館沉浸式體驗波蘭猶太人千年歷史｜Pawilony後院酒吧串｜在Milk Bar吃一頓$3的完整波蘭餐｜Łazienki公園週日蕭邦音樂會野餐｜維斯瓦河畔夏季沙灘酒吧",
-    tourismScore:80,notes:"非常安全。科技業蓬勃。物美價廉。二戰歷史深度無與倫比。"},
-  {city:"Krakow",photoUrl:"https://images.unsplash.com/photo-1564594326930-155d2c66dd13?w=800&h=400&fit=crop",country:"Poland",region:"europe",numbeoSafety:74.6,gpiRank:33,gpiScore:1.713,pettyTheft:"中等(老城)",violentCrime:"低",eastAsianRisk:"低",scams:"stag party",avoidAreas:"Nowa Huta",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:1700,rent:750,food:400,transport:25,coworking:120,internet:165,englishLevel:4,publicTransport:3.5,healthcareIndex:57.9,gpCost:20,erCost:80,englishDoctor:3.5,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/E (歐規)",tapWater:"安全",tipping:"10%",cardAcceptance:4,bestMonths:"5-9月",climate:"大陸性",
-    gdpPerCapita:28485,avgSalary:1500,wealthLevel:"中",
-    topUnis:"雅蓋隆大學 Jagiellonian University (1364, 波蘭最古老, 哥白尼母校), AGH 科技大學",
-    langSchools:"Polish語+英語課程多(大學城)",nomadCommunity:"大",educationScore:4,
-    attractions:"Main Market Square 中央集市廣場(歐洲最大中世紀廣場)｜Wawel Castle 瓦維爾城堡(波蘭王宮, 達文西《抱銀鼠的女子》)｜St. Mary's Basilica 聖母教堂(每小時號角聲)｜Kazimierz 猶太區(文青+歷史)｜Cloth Hall 紡織會館(廣場中央)｜Schindler's Factory 辛德勒工廠博物館｜Planty Park 環城公園",
-    nature:"Zakopane 扎科帕內(2hr, 波蘭滑雪首都, 塔特拉山)｜Ojców National Park(30min, 石灰岩峽谷)｜Vistula River 維斯瓦河騎行｜Kosciuszko Mound 科希丘什科土丘(全景)",
-    foodScene:"Obwarzanek 克拉科夫貝果(街頭必吃, 比NY bagel歷史更久)｜Pierogi(Przystanek Pierogarnia)｜Zapiekanka 長棍披薩(Kazimierz的Plac Nowy, 超便宜)｜Stary Kleparz Market 老市場｜Milk Bars(最便宜的一餐)｜Kiełbasa 烤香腸(廣場旁)",
-    nightlife:"Kazimierz 猶太區(數十家酒吧/Jazz吧)｜Alchemia(傳奇酒吧, 燭光地窖)｜Plac Nowy 週末(廣場變露天酒吧)｜Stag party文化(英國人很多, 週末稍吵)",
-    dayTrips:"Wieliczka Salt Mine 維利奇卡鹽礦(15min, 地下教堂+鹽湖, UNESCO, 必去)｜Auschwitz-Birkenau 奧斯威辛(1hr, 人類歷史最沉重的一課)｜Zakopane 扎科帕內(2hr, 塔特拉山脈+溫泉)｜Ojców National Park(30min, Pieskowa Skała 城堡)｜Tarnów 塔爾努夫(1hr, 文藝復興小鎮)",
-    culture:"Schindler's Factory(二戰占領期Kraków歷史)｜Galicia Jewish Museum(猶太文化)｜MOCAK 當代藝術博物館｜Wawel Cathedral(波蘭國王加冕處)｜Rynek Underground 地下博物館(廣場下方考古遺跡)",
-    seasonalEvents:"12月 Kraków Christmas Market(歐洲最美之一)｜6月 Jewish Culture Festival(Kazimierz)｜8月 Pierogi Festival 餃子節｜3月 Misteria Paschalia 復活節古樂節",
-    uniqueExp:"Wieliczka鹽礦地下100m的鹽雕教堂｜Auschwitz親歷人類歷史最黑暗一頁｜Alchemia地窖喝伏特加聽Jazz｜Plac Nowy凌晨吃$1的Zapiekanka｜手機月租$9全歐最便宜",
-    tourismScore:88,notes:"中世紀魅力。手機月租$9。非常划算。週末英國stag party有點吵。"},
-  // NETHERLANDS
-  {city:"Amsterdam",photoUrl:"https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=400&fit=crop",country:"Netherlands",region:"europe",numbeoSafety:71.6,gpiRank:13,gpiScore:1.491,pettyTheft:"中高(腳踏車竊盜嚴重)",violentCrime:"低",eastAsianRisk:"低中",scams:"假毒品/觀光陷阱",avoidAreas:"紅燈區深夜, Bijlmer",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:3200,rent:1700,food:650,transport:100,coworking:280,internet:213,englishLevel:5,publicTransport:4.5,healthcareIndex:81.5,gpCost:40,erCost:200,englishDoctor:5,pharmacyAccess:5,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:5,bestMonths:"4-9月",climate:"夏季15-22°C，冬季多雨多風",
-    gdpPerCapita:73174,avgSalary:3500,wealthLevel:"極高",
-    topUnis:"阿姆斯特丹大學 University of Amsterdam (QS全球53), VU Amsterdam, Amsterdam University of Applied Sciences",
-    langSchools:"Dutch語免費課程(市政府提供), 但全民說英語",nomadCommunity:"大",educationScore:5,
-    attractions:"Canal Ring 運河帶(UNESCO, 1,500座橋)｜Rijksmuseum 國立博物館(林布蘭《夜巡》)｜Van Gogh Museum 梵谷博物館｜Anne Frank House 安妮之家(必須預約)｜Vondelpark 馮德爾公園｜Jordaan 約丹區(最美街區, 精品店+咖啡)｜Dam Square 水壩廣場｜De Wallen 紅燈區(獨特, 觀光一次)｜A'DAM Lookout(北岸觀景台)",
-    nature:"Vondelpark(野餐+街頭表演)｜Amsterdamse Bos 阿姆斯特丹森林(划船+山羊農場)｜Zaanse Schans 贊斯風車村(30min)｜Hoge Veluwe National Park(1hr, 梵谷美術館分館)｜North Sea Beach Zandvoort(30min火車)",
-    foodScene:"Stroopwafel 荷蘭焦糖煎餅(街頭新鮮做)｜Haring 生鯡魚(街頭攤)｜Albert Cuyp Market 市場(最大露天市場)｜Foodhallen 美食廣場｜Indonesian Rijsttafel 印尼飯桌(殖民遺產, 20道菜)｜Cheese 荷蘭起司(Gouda, Edam)｜Bitterballen 炸苦味球(配啤酒)",
-    nightlife:"Leidseplein 萊登廣場(主流酒吧)｜Rembrandtplein(夜店)｜Paradiso(教堂改建音樂場地, 傳奇)｜Melkweg(表演場地)｜De Pijp 區craft beer｜Coffee shops(大麻咖啡館, 荷蘭特色)｜Jordaan Jazz bars",
-    dayTrips:"Keukenhof 庫肯霍夫花園(3-5月限定, 700萬朵鬱金香, 必去)｜Zaanse Schans 風車村(30min)｜Haarlem 哈倫(15min, 精緻版Amsterdam)｜Delft 代爾夫特(1hr, 藍陶+Vermeer故鄉)｜Rotterdam 鹿特丹(40min, 現代建築之都)｜Giethoorn 羊角村(2hr, 無車水鄉)｜Utrecht 烏特勒支(30min)",
-    culture:"Rijksmuseum(荷蘭黃金時代)｜Van Gogh Museum｜Stedelijk Museum 現代藝術｜Anne Frank House｜NEMO Science Museum(兒童科學互動)｜EYE Filmmuseum(北岸, 建築本身是藝術品)｜Concertgebouw 皇家音樂廳(世界最佳音響之一, 免費午間音樂會)",
-    seasonalEvents:"4/27 King's Day 國王日(全城橘色派對, 全國最大節日)｜3-5月 Keukenhof 鬱金香季｜8月 Amsterdam Pride 運河遊行(全球最獨特的Pride)｜12月 Amsterdam Light Festival 燈光節(運河燈光裝置藝術)",
-    uniqueExp:"King's Day 全城橘色萬人空巷自由市場+運河派對｜運河遊船黃昏巡禮(自駕小船或觀光船)｜騎腳踏車穿越運河帶(像本地人)｜Keukenhof 700萬朵鬱金香(3-5月限定)｜Paradiso教堂裡聽現場音樂",
-    tourismScore:93,notes:"英語近乎母語水準。考慮Rotterdam/Eindhoven更安全更便宜。腳踏車失竊嚴重。"},
-  // JAPAN
-  {city:"Tokyo",photoUrl:"https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:75.3,gpiRank:11,gpiScore:1.440,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"無(本地)",scams:"低(六本木酒吧/歌舞伎町)",avoidAreas:"歌舞伎町深夜, 六本木(下藥)",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月, ¥10M/年)",monthlyBudget:2200,rent:1100,food:500,transport:80,coworking:200,internet:197,englishLevel:2.5,publicTransport:5,healthcareIndex:78.7,gpCost:80,erCost:300,englishDoctor:3.5,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3.5,bestMonths:"3-5月, 10-11月",climate:"溫帶，夏季悶熱，梅雨6月",
-    gdpPerCapita:34713,avgSalary:2800,wealthLevel:"高",
-    topUnis:"東京大學 University of Tokyo (QS全球28), 早稻田大學, 慶應大學, 東京工業大學",
-    langSchools:"日語學校極多(ISI, Kudan Institute, GenkiJACS), 全球最大日語學習市場",nomadCommunity:"中(DN簽2024後成長)",educationScore:5,
-    attractions:"Shibuya Crossing 渋谷十字路口(全球最繁忙路口)｜Senso-ji 淺草寺(東京最古老寺廟, 雷門)｜Meiji Shrine 明治神宮(原宿旁森林中的神社)｜Tokyo Tower/Skytree 東京鐵塔/晴空塔｜Tsukiji Outer Market 築地場外市場(壽司早餐)｜Akihabara 秋葉原(動漫/電器聖地)｜Shinjuku 新宿(Golden Gai 黃金街, 200間微型酒吧)｜TeamLab Borderless(數位藝術, 全球唯一)｜Harajuku 原宿(Takeshita Street 竹下通)｜Imperial Palace 皇居(護城河+花園)",
-    nature:"Mt. Fuji 富士山(2hr, 日本象徵, 7-9月可登頂)｜Hakone 箱根(1.5hr, 溫泉+蘆之湖+富士山景)｜高尾山 Mt. Takao(45min, 輕鬆健行)｜Kamakura 鎌倉(1hr, 大佛+海邊)｜Nikko 日光(2hr, 東照宮, UNESCO)｜奥多摩(2hr, 東京的秘境溪谷)",
-    foodScene:"壽司(Sushi Dai築地/豊洲排隊名店)｜拉麵(一蘭/Fuunji/Rokurinsha)｜天婦羅/鰻魚/蕎麥麵｜居酒屋(新宿思出橫丁/惠比壽橫丁)｜Conveyor belt sushi 迴轉壽司(Sushiro)｜便利商店美食(7-11飯糰真的好吃)｜抹茶甜點(中目黑/淺草)｜和牛燒肉｜築地場外市場海鮮早餐",
-    nightlife:"Golden Gai 黃金街(200家微型酒吧, 各有主題)｜Shibuya 渋谷(夜店, WOMB/Contact)｜Roppongi 六本木(外國人聚點, 注意下藥)｜Shimokitazawa 下北澤(indie live house)｜Shinjuku Ni-chome(LGBTQ+, 300家店)｜Jazz吧(Blue Note Tokyo)｜卡拉OK(Big Echo/Joysound)",
-    dayTrips:"Hakone 箱根(1.5hr, 溫泉+富士山景, 必去)｜Kamakura 鎌倉(1hr, 大佛+江之電+海灘)｜Nikko 日光(2hr, 東照宮金碧輝煌, UNESCO)｜Mt. Fuji 五合目(2hr, 冬天看夏天爬)｜Kawaguchiko 河口湖(2hr, 富士山最佳拍攝點)｜Yokohama 横浜(30min, 中華街+港未來)｜Enoshima 江之島(1hr, 海島+夕陽)",
-    culture:"東京國立博物館(亞洲最大)｜teamLab(數位藝術革命)｜Mori Art Museum 森美術館(六本木Hills)｜歌舞伎座(傳統歌舞伎)｜相撲(1/5/9月 兩國國技館)｜茶道體驗｜和服租借(淺草)｜豐洲市場見學(凌晨鮪魚拍賣)",
-    seasonalEvents:"3-4月 櫻花季(上野/目黒川/千鳥ヶ淵)｜7月 隅田川花火大會(百萬人)｜8月 阿波踊り｜10-11月 紅葉(高尾山/六義園)｜12月 聖誕燈飾(表参道/丸之內)｜1月 初詣(明治神宮300萬人)",
-    uniqueExp:"Golden Gai 擠進6人座酒吧跟老闆聊天｜築地凌晨5點壽司早餐｜澀谷十字路口正中央站著(全球最密集人流)｜teamLab Borderless沉浸式數位藝術｜新宿Robot Restaurant機器人表演(荒唐但有趣)｜箱根溫泉看富士山",
-    tourismScore:98,notes:"遺失物品會被歸還。日圓159歷史低點=價格從未如此好。數位遊牧簽要求¥10M年收(~$67K)。藥品管制極嚴。插座和北美相同。"},
-  {city:"Osaka",photoUrl:"https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:66.9,gpiRank:11,gpiScore:1.440,pettyTheft:"低",violentCrime:"極低",eastAsianRisk:"無",scams:"低中",avoidAreas:"釜ヶ崎/あいりん(西成)",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月)",monthlyBudget:1900,rent:900,food:450,transport:70,coworking:180,internet:197,englishLevel:2.5,publicTransport:5,healthcareIndex:78.7,gpCost:70,erCost:280,englishDoctor:3,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3.5,bestMonths:"3-5月, 10-11月",climate:"溫帶，夏季悶熱",
-    gdpPerCapita:34713,avgSalary:2400,wealthLevel:"高",
-    topUnis:"大阪大學 Osaka University (QS全球80), 關西大學, 近畿大學",
-    langSchools:"日語學校多(ARC Academy, MERIC)",nomadCommunity:"小中",educationScore:4,
-    attractions:"Dotonbori 道頓堀(霓虹招牌+街頭美食, Glico Man)｜Osaka Castle 大阪城(天守閣+公園)｜Shinsekai 新世界(通天閣, 復古商店街)｜Universal Studios Japan USJ(任天堂世界!)｜Kuromon Market 黑門市場(大阪的廚房)｜Namba 難波(千日前道具屋筋)｜天保山摩天輪+海遊館(世界最大水族館之一)",
-    nature:"箕面瀑布 Minoo Falls(30min, 輕鬆健行+紅葉名所)｜大阪城公園(櫻花)｜住吉大社(2,000年神社)｜奈良(45min, 餵鹿)",
-    foodScene:"天下の台所(天下廚房)!｜Takoyaki 章魚燒(Wanaka/Kukuru)｜Okonomiyaki 大阪燒(Mizuno/Fukutaro)｜串カツ Kushikatsu 炸串(Daruma, 新世界)｜551蓬莱 肉包子｜道頓堀一蘭拉麵｜黑門市場海鮮(帝王蟹腳現烤)｜迴轉壽司(Endo Sushi, 中央市場5AM)｜焼肉(鶴橋Korean Town)",
-    nightlife:"道頓堀+Shinsaibashi(最熱鬧)｜Ura-Namba 裏難波(居酒屋小巷)｜Americamura 美國村(年輕人)｜Juso 十三(平民居酒屋天堂)｜大阪人超級friendly(隨時搭話)",
-    dayTrips:"Nara 奈良(45min, 餵鹿+東大寺大佛, 必去)｜Kyoto 京都(30min新幹線)｜Kobe 神戶(30min, 神戶牛+北野異人館)｜Himeji 姬路(1hr, 白鷺城, 日本最美城堡, UNESCO)｜Wakayama 和歌山(1hr, 貓站長)｜Mount Koya 高野山(2hr, 宿坊體驗+奧之院夜間參拜)",
-    culture:"國立民族學博物館｜大阪市立美術館｜文樂(人形淨瑠璃, UNESCO)｜吉本新喜劇(大阪搞笑文化聖地)｜通天閣展望台",
-    seasonalEvents:"3-4月 大阪城櫻花｜7月 天神祭(日本三大祭, 船渡御+煙火)｜10月 御堂筋Illumination(4km燈飾)｜1月 十日戎(今宮戎神社, 求商業繁盛)",
-    uniqueExp:"道頓堀戎橋拍Glico Man｜在新世界吃串カツ配啤酒(下午就開始)｜USJ任天堂世界(全球唯一)｜奈良和鹿自拍(鹿會鞠躬)｜高野山宿坊住宿+凌晨誦經",
-    tourismScore:90,notes:"食在大阪。比東京便宜。日本犯罪率最高的城市但仍是全球最安全等級。大阪人的搞笑DNA讓旅程特別有趣。"},
-  {city:"Kyoto",photoUrl:"https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:85.8,gpiRank:11,gpiScore:1.440,pettyTheft:"極低",violentCrime:"極低(犯罪率1.45%)",eastAsianRisk:"無",scams:"極少",avoidAreas:"無(過度旅遊是困擾非安全問題)",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月)",monthlyBudget:1800,rent:850,food:400,transport:50,coworking:160,internet:197,englishLevel:2.5,publicTransport:4,healthcareIndex:78.7,gpCost:70,erCost:280,englishDoctor:3,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3.5,bestMonths:"3-5月, 10-11月",climate:"盆地，夏季酷暑",
-    gdpPerCapita:34713,avgSalary:2200,wealthLevel:"高",
-    topUnis:"京都大學 Kyoto University (QS全球46, 日本第二), 同志社大學, 立命館大學",
-    langSchools:"日語學校多(ISI Kyoto, ARC Kyoto)",nomadCommunity:"小",educationScore:5,
-    attractions:"Fushimi Inari 伏見稻荷大社(千本鳥居, 全日本最多遊客神社)｜Kinkaku-ji 金閣寺｜Arashiyama 嵐山(竹林小道+渡月橋)｜Kiyomizu-dera 清水寺(懸崖舞台)｜Gion 祇園(藝妓街區)｜Nijo Castle 二條城(鶯鳴地板)｜Philosopher's Path 哲學之道(櫻花隧道)｜Ryoan-ji 龍安寺(枯山水庭園)",
-    nature:"嵐山竹林+保津川遊船｜大文字山(輕鬆健行, 市區全景)｜鞍馬寺到貴船神社(山中健行)｜嵯峨野觀光小火車(紅葉季絕景)｜琵琶湖(30min, 日本最大湖)",
-    foodScene:"懐石料理(京都發源, 最高級日本料理)｜湯豆腐(南禪寺一帶)｜抹茶(中村藤吉/伊藤久右衛門)｜Nishiki Market 錦市場(京都的廚房, 400年歷史)｜おばんざい Obanzai(京都家庭料理)｜八ツ橋 Yatsuhashi(肉桂餅, 京都名物)｜先斗町(鴨川旁料理小巷)",
-    nightlife:"先斗町 Pontocho(鴨川納涼床, 夏季限定)｜木屋町通 Kiyamachi(酒吧街)｜Gion 祇園(高級酒吧)｜相對安靜(京都不是夜生活城市)",
-    dayTrips:"Nara 奈良(45min, 鹿+東大寺)｜Osaka 大阪(15min新幹線)｜Uji 宇治(30min, 抹茶聖地+平等院)｜比叡山 Mt. Hiei(1hr, 延曆寺+琵琶湖絕景)｜天橋立(2hr, 日本三景之一)｜伊根舟屋(2.5hr, 海上船屋村落)",
-    culture:"17處UNESCO世界遺產(全球城市最多之一)｜茶道體驗(裏千家/表千家)｜和服租借漫步祇園｜座禪體驗(建仁寺/妙心寺)｜藝妓/舞妓觀賞(花見小路)｜金箔工藝體驗｜能劇/狂言(觀世流)",
-    seasonalEvents:"3-4月 櫻花(哲學之道/醍醐寺/平安神宮)｜7月 祇園祭(日本三大祭, 千年歷史, 山鉾巡行)｜8/16 五山送り火(大文字焚燒)｜11月 紅葉(東福寺/永観堂/嵐山, 夜間Light-up)｜12月 嵐山花燈路",
-    uniqueExp:"清晨6點空無一人的伏見稻荷千本鳥居(避開人潮的唯一方法)｜祇園黃昏巧遇藝妓(不要追!)｜嵐山竹林+保津川遊船組合｜秋天紅葉季東福寺(全日本最美)｜宇治抹茶全餐(抹茶蕎麥麵+抹茶冰淇淋+抹茶糰子)",
-    tourismScore:96,notes:"犯罪率僅1.45%。古都魅力。夏季盆地效應極熱。櫻花季和紅葉季超crowded。17處UNESCO。"},
-  {city:"Fukuoka",photoUrl:"https://images.unsplash.com/photo-1573455494060-c5595004fb6c?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:75,gpiRank:11,gpiScore:1.440,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"無",scams:"極少",avoidAreas:"中洲深夜(輕微)",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月)",monthlyBudget:1400,rent:600,food:350,transport:50,coworking:120,internet:197,englishLevel:2.5,publicTransport:3.5,healthcareIndex:78.7,gpCost:65,erCost:260,englishDoctor:2.5,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3.5,bestMonths:"3-5月, 10-11月",climate:"溫暖溫帶",
-    gdpPerCapita:34713,avgSalary:2100,wealthLevel:"高",
-    topUnis:"九州大學 Kyushu University (QS全球164)",
-    langSchools:"日語學校(GenkiJACS Fukuoka, 評價極高)",nomadCommunity:"小中(成長中)",educationScore:3,
-    attractions:"中洲屋台 Nakasu Yatai(河岸路邊攤, 福岡靈魂)｜Canal City Hakata(購物+噴泉秀)｜Ohori Park 大濠公園(市中心大湖公園)｜福岡塔(海濱觀景)｜太宰府天滿宮(學問之神, 梅花)｜博多祇園山笠(夏季祭典)｜Kushida Shrine 櫛田神社",
-    nature:"能古島 Nokonoshima(渡輪15min, 花島)｜糸島半島 Itoshima(1hr, 海邊咖啡+夕陽)｜志賀島(海中道路)｜英彦山(1.5hr, 修驗道聖山)",
-    foodScene:"博多拉麵(一風堂發源地/一蘭總店/Shin Shin)｜もつ鍋 Motsunabe 牛腸鍋｜中洲屋台(拉麵+串燒+關東煮, 深夜到凌晨)｜明太子(博多名物, 丸海屋)｜水炊き Mizutaki 雞肉火鍋｜柳橋連合市場(在地人市場)",
-    nightlife:"中洲屋台(最獨特的夜生活, 路邊攤到凌晨)｜中洲夜店街(九州最大)｜天神地下街(購物+居酒屋)｜春吉(小酒吧區)",
-    dayTrips:"太宰府(30min, 天滿宮+九州國立博物館)｜柳川(1hr, 撐船遊河+鰻魚飯)｜糸島 Itoshima(1hr, 海灘+牡蠣小屋冬季)｜門司港(1hr, 復古港町+河豚)｜湯布院 Yufuin(2hr, 溫泉小鎮+金鱗湖)｜別府 Beppu(2hr, 地獄溫泉巡遊)",
-    culture:"九州國立博物館(太宰府)｜博多町家ふるさと館(博多傳統文化)｜博多織體驗｜中洲屋台文化本身就是UNESCO級非物質文化遺產(雖然還沒申請)",
-    seasonalEvents:"7月 博多祇園山笠(男人裸身扛重達1噸的山車狂奔, 震撼)｜5月 博多どんたく(200萬人參加)｜3月 太宰府梅花季｜11月 博多秋博",
-    uniqueExp:"中洲屋台坐在河邊吃拉麵喝啤酒到凌晨｜博多山笠祭看半裸男人扛山車衝刺｜糸島海邊咖啡看夕陽｜機場到市區僅5分鐘地鐵(全日本最方便)｜冬季糸島牡蠣小屋無限烤牡蠣",
-    tourismScore:78,notes:"日本最宜居城市之一。屋台(路邊攤)拉麵。$1,400/月極度划算。新創氛圍。機場離市區僅5分鐘地鐵。"},
-  {city:"Sapporo",photoUrl:"https://images.unsplash.com/photo-1583158345367-7ee34c876032?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:80,gpiRank:11,gpiScore:1.440,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"無",scams:"極少",avoidAreas:"薄野深夜, 熊出沒！",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月)",monthlyBudget:1250,rent:500,food:350,transport:50,coworking:100,internet:197,englishLevel:2,publicTransport:3.5,healthcareIndex:78.7,gpCost:65,erCost:260,englishDoctor:2.5,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3,bestMonths:"6-9月",climate:"寒帶，冬季大雪-10°C",
-    gdpPerCapita:34713,avgSalary:2000,wealthLevel:"高",
-    topUnis:"北海道大學 Hokkaido University (QS全球196)",
-    langSchools:"日語學校(Hokkaido JaLS)",nomadCommunity:"小",educationScore:3,
-    attractions:"大通公園(城市中軸, 季節活動)｜札幌啤酒博物館(Sapporo Beer Museum)｜時計台(鐘樓, 地標)｜藻岩山(夜景, 日本新三大夜景)｜北海道神宮｜二條市場(海鮮早餐)｜白色戀人公園(巧克力工廠)",
-    nature:"富良野/美瑛(2hr, 花田+拼布之路, 7月薰衣草)｜小樽 Otaru(30min, 運河+玻璃工藝)｜洞爺湖(2hr, 火山湖+溫泉)｜支笏湖(1hr, 日本最清澈湖泊)｜滑雪(Niseko/Rusutsu/富良野, 全球頂級粉雪)｜知床半島(飛機+車, UNESCO, 棕熊+流冰)",
-    foodScene:"味噌拉麵(札幌發源! 狸小路/拉麵共和國)｜成吉思汗烤肉 Jingisukan(羊肉, 啤酒園)｜海鮮丼(二條市場/中央卸売市場, 超新鮮)｜湯咖哩 Soup Curry(札幌獨有)｜螃蟹(毛蟹/帝王蟹, 冬季)｜Shiroi Koibito 白色戀人(北海道最知名伴手禮)｜哈密瓜(夕張, 夏季)",
-    nightlife:"薄野 Susukino(北海道最大歡樂街, 拉麵橫丁在這)｜Tanuki Koji 狸小路(商店街)｜Bar culture(威士忌吧多)",
-    dayTrips:"小樽 Otaru(30min, 運河+壽司街+音樂盒堂, 必去)｜富良野/美瑛(2hr, 夏季花田/冬季雪景)｜登別溫泉(1.5hr, 地獄谷)｜洞爺湖(2hr, 火山+溫泉)｜旭川(1.5hr, 旭山動物園, 企鵝散步冬季限定)｜Niseko(2hr, 世界級粉雪滑雪)",
-    culture:"北海道博物館(愛努文化)｜北海道開拓之村(明治時代建築保存)｜札幌藝術之森｜愛努文化(Upopoy國立民族共生象徵空間, 白老町2hr)",
-    seasonalEvents:"2月 札幌雪祭(200座大型雪雕, 全球最大冬季節慶, 必去)｜7月 富良野薰衣草季｜8月 札幌夏祭(啤酒園+盆踊り)｜12月 Munich Christmas Market in Sapporo(大通公園白色燈飾)",
-    uniqueExp:"札幌雪祭看巨型雪雕+冰雕(2月限定, 震撼)｜Niseko滑世界頂級粉雪｜在啤酒園吃成吉思汗烤肉配Sapporo生啤｜小樽運河黃昏散步｜旭山動物園看企鵝排隊散步(冬季限定)",
-    tourismScore:80,notes:"北海道極安全。2025年熊害致13人死。冬季大雪。夏季涼爽宜人。啤酒和海鮮。雪祭2月。"},
-  {city:"Okinawa",photoUrl:"https://images.unsplash.com/photo-1583656346409-87546tried2?w=800&h=400&fit=crop",country:"Japan",region:"asia",numbeoSafety:75,gpiRank:11,gpiScore:1.440,pettyTheft:"極低",violentCrime:"極低",eastAsianRisk:"無",scams:"極少",avoidAreas:"美軍基地附近深夜",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(6個月)",monthlyBudget:1200,rent:450,food:350,transport:40,coworking:80,internet:197,englishLevel:2.5,publicTransport:2,healthcareIndex:78.7,gpCost:65,erCost:260,englishDoctor:2.5,pharmacyAccess:4,timezone:"UTC+9",tzOffset:17,plugType:"A/B (同北美)",tapWater:"安全",tipping:"絕對不要",cardAcceptance:3,bestMonths:"3-5月, 10-11月",climate:"亞熱帶海洋性",
-    gdpPerCapita:34713,avgSalary:1600,wealthLevel:"中高",
-    topUnis:"琉球大學 University of the Ryukyus, OIST沖繩科學技術大學院大學(世界頂級研究機構)",
-    langSchools:"日語學校少(但OIST有國際環境)",nomadCommunity:"小",educationScore:2.5,
-    attractions:"美ら海水族館 Churaumi Aquarium(世界最大水族館之一, 巨大鯨鯊)｜首里城 Shuri Castle(琉球王國遺跡, 2019火災後重建中)｜國際通 Kokusai Street(那霸主街)｜American Village 北谷美國村｜萬座毛(斷崖絕景)｜古宇利大橋(海上公路)｜座喜味城跡(UNESCO)",
-    nature:"海灘(古宇利島/渡嘉敷島/慶良間群島, 世界級清澈度)｜浮潛/潛水(慶良間群島, 海龜共游)｜青之洞窟 Blue Cave(真栄田岬)｜Mangrove Kayak 紅樹林獨木舟｜鯨魚觀賞(1-3月)｜星砂海灘",
-    foodScene:"沖繩そば Okinawa Soba(豚骨湯+粗麵)｜Taco Rice 塔可飯(美軍文化融合)｜ゴーヤチャンプルー 苦瓜炒什錦｜紫薯甜點(Beni-imo Tart)｜Orion Beer(沖繩啤酒)｜泡盛 Awamori(琉球燒酒)｜豬肉文化(Rafute紅燒五花肉)｜牧志公設市場(1樓買海鮮2樓現煮)",
-    nightlife:"國際通(居酒屋+三線音樂)｜北谷美國村(美式酒吧)｜三線民謠酒場(沖繩獨特)｜相對安靜的夜生活",
-    dayTrips:"慶良間群島(渡輪50min, 世界級浮潛/潛水, 必去)｜古宇利島(1.5hr車, 心形岩+海灘)｜渡嘉敷島(渡輪35min, 珊瑚礁)｜竹富島(從石垣島渡輪15min, 水牛車)｜座間味島(渡輪50min, 鯨魚季)",
-    culture:"琉球文化(非日本本土, 獨立文化圈)｜エイサー Eisa 太鼓舞(沖繩傳統舞蹈)｜紅型 Bingata 染色工藝體驗｜Shisa 獅子製作體驗｜壺屋陶器街(やちむん通り)",
-    seasonalEvents:"4月 海開き(全日本最早開海)｜8月 エイサー祭り(太鼓舞全島慶典)｜1-3月 櫻花(全日本最早! 寒緋桜)｜2月 鯨魚觀賞季(座間味)",
-    uniqueExp:"慶良間群島和海龜一起浮潛｜青之洞窟(Blue Cave)潛水｜在三線酒場聽琉球民謠喝泡盛｜全日本最早賞櫻(1-2月!)｜牧志市場1樓買2樓吃現煮海鮮",
-    tourismScore:80,notes:"熱帶日本。海灘。最便宜的日本城市。離島醫療有限。6-10月颱風季。需要車。"},
-  // NORDICS
-  {city:"Copenhagen",photoUrl:"https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=400&fit=crop",country:"Denmark",region:"europe",numbeoSafety:74.2,gpiRank:7,gpiScore:1.393,pettyTheft:"中等(Tivoli/Stroget)",violentCrime:"低",eastAsianRisk:"低",scams:"少見",avoidAreas:"Norrebro, Ishoj",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:3500,rent:1800,food:700,transport:65,coworking:350,internet:175,englishLevel:5,publicTransport:4.5,healthcareIndex:77.2,gpCost:40,erCost:200,englishDoctor:5,pharmacyAccess:4,timezone:"UTC+1",tzOffset:9,plugType:"C/K (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:5,bestMonths:"5-9月",climate:"夏季17-22°C，冬季0-5°C多風",
-    gdpPerCapita:76581,avgSalary:4000,wealthLevel:"極高",
-    topUnis:"哥本哈根大學 University of Copenhagen (QS全球82), DTU 丹麥技術大學, CBS 哥本哈根商學院",
-    langSchools:"Danish語免費課程(政府提供給居民), 全民英語",nomadCommunity:"中",educationScore:5,
-    attractions:"Tivoli Gardens 趣伏里樂園(1843, 全球第二古老遊樂園)｜Nyhavn 新港(彩色房子, 最經典明信片)｜Little Mermaid 小美人魚像｜Christiania 克里斯蒂安尼亞(自由城, 嬉皮公社)｜Amalienborg 王宮(衛兵交接)｜Rosenborg Castle 羅森堡宮(皇冠珠寶)｜Round Tower 圓塔｜Design Museum Denmark",
-    nature:"Lakes 三湖區(市中心跑步/划船)｜Amager Strandpark 海灘公園(地鐵可到)｜Dyrehaven 鹿園(皇家狩獵公園, 2,000頭鹿)｜Øresund Bridge 看日落(往瑞典方向)",
-    foodScene:"Smørrebrød 開放式三明治(Aamanns, Selma)｜New Nordic Cuisine 新北歐料理(noma遺產, Alchemist, Geranium)｜Hotdog 熱狗(街頭攤, DKK 40)｜Torvehallerne 玻璃市場(美食+食材)｜Pastry(維也納麵包其實是丹麥的! Lagkagehuset)｜Hygge 文化(咖啡+蠟燭+毛毯)",
-    nightlife:"Meatpacking District 肉品包裝區(酒吧+夜店)｜Vesterbro(hipster酒吧)｜Nørrebro(多元文化夜生活)｜Bakken(世界最古老遊樂園旁)｜Jazz clubs(Copenhagen Jazz Festival世界知名)｜Christiania(另類, 獨立酒吧)｜Microbar(精釀啤酒, Mikkeller發源地)",
-    dayTrips:"Malmö 馬爾默(20min火車, 跨Øresund大橋到瑞典!)｜Roskilde 羅斯基勒(30min, Viking Ship Museum)｜Helsingør 赫爾辛格(45min, Kronborg Castle = 哈姆雷特城堡)｜Dragør 德拉厄(30min, 漁村)｜Louisiana Museum of Modern Art(35min, 海邊現代藝術, 必去)",
-    culture:"Louisiana Museum(海邊現代藝術, 全球最美美術館之一)｜Design Museum Denmark(丹麥設計DNA)｜National Museum 國家博物館｜Ny Carlsberg Glyptotek(古典藝術)｜Danish Architecture Center (DAC)｜Royal Danish Playhouse",
-    seasonalEvents:"7月 Copenhagen Jazz Festival(10天, 全城都是舞台)｜6月 Distortion(街頭電子音樂節)｜12月 Tivoli Christmas Market(夢幻)｜8月 Copenhagen Pride｜11月 CPH:DOX 紀錄片影展",
-    uniqueExp:"Tivoli夜間點燈漫步(聖誕季最魔幻)｜Christiania自由城散步(全球最大嬉皮公社)｜騎自行車像當地人(全球最佳自行車城市)｜Louisiana美術館看著大海看藝術｜20min火車跨國到瑞典Malmö",
-    tourismScore:88,notes:"女性安全全球第一。郊區有幫派暴力但旅客不受影響。Hygge文化。全球最佳自行車城市。"},
-  {city:"Oslo",photoUrl:"https://images.unsplash.com/photo-1548457474-c8a51c39f57d?w=800&h=400&fit=crop",country:"Norway",region:"europe",numbeoSafety:66.1,gpiRank:29,gpiScore:1.644,pettyTheft:"低",violentCrime:"低",eastAsianRisk:"低",scams:"少見",avoidAreas:"Gronland夜間",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(2年)",monthlyBudget:3600,rent:1800,food:800,transport:95,coworking:350,internet:160,englishLevel:5,publicTransport:4,healthcareIndex:75.8,gpCost:50,erCost:250,englishDoctor:5,pharmacyAccess:4,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:5,bestMonths:"5-9月",climate:"夏季15-22°C宜人，冬季寒冷多雪",
-    gdpPerCapita:91884,avgSalary:4200,wealthLevel:"極高(全球最高之一)",
-    topUnis:"奧斯陸大學 University of Oslo (QS全球113), BI Norwegian Business School",
-    langSchools:"Norwegian語課程(政府提供), 全民說英語",nomadCommunity:"小",educationScore:4.5,
-    attractions:"Opera House 歌劇院(可走上屋頂)｜Vigeland Sculpture Park 維格蘭雕塑公園(200+人體雕塑)｜Munch Museum 孟克博物館(吶喊)｜Akershus Fortress 阿克斯胡斯要塞｜Aker Brygge 港區(餐廳+散步)｜Holmenkollen 滑雪跳台+博物館｜Grünerløkka 格呂內洛卡區(hipster聖地)",
-    nature:"Oslofjord 奧斯陸峽灣(島嶼跳島/帆船/夏季游泳)｜Nordmarka 森林(市區北邊, 越野滑雪/健行)｜Sognsvann 湖(地鐵可達, 游泳/跑步)｜Kolsåstoppen(輕鬆健行, 城市全景)｜極光(冬季北邊可見)",
-    foodScene:"超貴(一杯啤酒NOK100+≈$10)｜Smoked salmon 燻鮭魚(Mathallen美食廣場)｜Fårikål 羊肉白菜(國菜)｜Brunost 棕色起司(甜鹹, 挪威獨有)｜Mathallen Oslo 美食廣場(必去)｜Grünerløkka 咖啡區(Tim Wendelboe, 全球最佳咖啡之一)｜New Nordic(Maaemo, 三星米其林)",
-    nightlife:"Grünerløkka(hipster酒吧)｜Aker Brygge(港邊喝酒)｜Youngstorget(週末夜生活)｜Blå(Jazz/electronic)｜注意: 酒精極貴(一品脫$12-15)，當地人都在家pre-drink再出門",
-    dayTrips:"Bergen 卑爾根(飛機1hr/火車7hr, 峽灣門戶)｜Drøbak 德勒巴克(1hr, 峽灣小鎮+聖誕老人郵局)｜Fredrikstad 腓特烈斯塔(1hr, 北歐最完整堡壘城鎮)｜Hadeland 玻璃工藝村(1hr)｜Norway in a Nutshell 峽灣一日遊(從Oslo出發, 整天)",
-    culture:"Munch Museum(孟克的《吶喊》四個版本之一)｜National Museum 國家博物館(2022新開幕, 北歐最大)｜Nobel Peace Center 諾貝爾和平中心｜Viking Planet(VR維京體驗)｜Fram Museum(極地探險船)",
-    seasonalEvents:"5/17 National Day 國慶日(全國最大慶典, 兒童遊行, 全民穿Bunad傳統服飾)｜12月 聖誕市集(冬季仙境)｜6月 Midsummer 仲夏節(白夜慶典)｜8月 Øya Festival(北歐最大音樂節之一)",
-    uniqueExp:"5/17國慶日穿梭在數萬穿Bunad的挪威人中｜走上歌劇院屋頂看峽灣日落｜Sognsvann湖夏季游泳(地鐵直達)｜Nordmarka森林越野滑雪(冬季)｜Mathallen喝Tim Wendelboe咖啡(全球Top 3)",
-    tourismScore:78,notes:"瑞典幫派影響力開始蔓延。旅遊區安全。物價極高。峽灣是此行最大亮點但需離開Oslo。"},
-  {city:"Stockholm",photoUrl:"https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&h=400&fit=crop",country:"Sweden",region:"europe",numbeoSafety:53.9,gpiRank:32,gpiScore:1.709,pettyTheft:"中高(地鐵/老城)",violentCrime:"中(郊區幫派)",eastAsianRisk:"中等",scams:"中等",avoidAreas:"Rinkeby, Tensta, Husby",twVisa:"90天免簽",hkVisa:"90天免簽",caVisa:"90天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:3200,rent:1600,food:700,transport:100,coworking:300,internet:190,englishLevel:5,publicTransport:4.5,healthcareIndex:68.3,gpCost:30,erCost:150,englishDoctor:5,pharmacyAccess:4,timezone:"UTC+1",tzOffset:9,plugType:"C/F (歐規)",tapWater:"安全",tipping:"湊整數",cardAcceptance:5,bestMonths:"5-9月",climate:"夏季15-25°C，冬季-5到3°C",
-    gdpPerCapita:62036,avgSalary:3500,wealthLevel:"極高",
-    topUnis:"KTH Royal Institute of Technology (QS全球73), Stockholm University, Stockholm School of Economics (SSE)",
-    langSchools:"Swedish語免費課程(SFI, 政府提供), 全民英語",nomadCommunity:"中",educationScore:5,
-    attractions:"Gamla Stan 老城(中世紀巷弄, 皇宮, Nobel Museum)｜Vasa Museum 瓦薩博物館(1628年沉船完整打撈, 必去)｜ABBA Museum｜Skansen 斯堪森露天博物館(全球最古老露天博物館)｜Stockholm Archipelago 群島(30,000座島!)｜City Hall 市政廳(諾貝爾晚宴場地)｜Fotografiska 攝影博物館｜Metro Art 地鐵藝術(世界最長藝術展, 90+站各有特色)",
-    nature:"Stockholm Archipelago 群島(渡輪跳島, 30,000座島)｜Djurgården 動物園島(城市綠洲)｜Tyresta National Park(30min, 原始森林)｜Hellasgården(森林湖, 桑拿+冬泳)｜Nacka Nature Reserve(健行)｜冬季 Northern Lights 有機會(城市邊緣)",
-    foodScene:"Meatballs 瑞典肉丸(Meatballs for the People)｜Smörgåsbord 瑞典式自助餐(Pelikan)｜Kanelbullar 肉桂捲(Fika文化必備)｜Surströmming 臭鯡魚(勇者挑戰)｜Östermalms Saluhall 市場(高級食材)｜Fika文化(咖啡+甜點, 瑞典人一天至少兩次)｜New Nordic(Frantzén, 三星)｜Tunnbrödsrulle(蝦沙拉熱狗)",
-    nightlife:"Stureplan 斯圖雷廣場(高端夜店)｜Södermalm 南島(hipster酒吧, 最酷的區)｜Trädgården(夏季戶外俱樂部, 橋下)｜Fasching(Jazz)｜Debaser(live music)｜Midsommar celebrations(仲夏節瘋狂)",
-    dayTrips:"Uppsala 烏普薩拉(40min, 大學城+維京遺跡+大教堂)｜Sigtuna 西格蒂納(1hr, 瑞典最古老城鎮, 維京石碑)｜Drottningholm Palace 卓寧霍姆宮(30min, 瑞典凡爾賽, UNESCO)｜Archipelago Islands 群島跳島(渡輪, 可去Sandhamn/Vaxholm)｜Grinda Island(2hr渡輪, 夏季度假島)",
-    culture:"Vasa Museum(全球唯一完整保存17世紀戰艦)｜ABBA Museum(互動式)｜Moderna Museet 現代藝術博物館｜Nobel Prize Museum｜Metro Art 地鐵藝術(免費! 參加導覽)｜Royal Palace 皇宮(衛兵交接)｜Millesgården 雕塑花園",
-    seasonalEvents:"6月 Midsommar 仲夏節(全瑞典最大節日, 跳蛙舞+花環+鯡魚)｜12月 聖誕市集(Gamla Stan)｜8月 Stockholm Culture Festival(免費)｜10月 Nobel Week(12月頒獎典禮)｜2月 Stockholm Design Week",
-    uniqueExp:"地鐵藝術之旅(每站不同主題, 世界最長藝術展覽)｜群島跳島渡輪一日遊｜Fika文化體驗(像瑞典人一樣一天喝兩次咖啡配肉桂捲)｜仲夏節跳蛙舞+吃鯡魚(如果6月在的話)｜Gamla Stan無人巷弄清晨漫步",
-    tourismScore:88,notes:"治安聲譽因幫派暴力大幅下滑。2025年1月30+起爆炸案。旅遊中心區相對安全。Numbeo比美國還低。Fika文化。群島絕美。"},
-  // THAILAND
-  {city:"Bangkok",photoUrl:"https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&h=400&fit=crop",country:"Thailand",region:"asia",numbeoSafety:61.4,gpiRank:77,gpiScore:2.017,pettyTheft:"高(Chatuchak/BTS)",violentCrime:"低中",eastAsianRisk:"低(詐騙非歧視)",scams:"非常高(寺廟嘟嘟車/珠寶/飛車/跳錶)",avoidAreas:"Klong Toey, Khao San深夜",twVisa:"60天免簽",hkVisa:"60天免簽",caVisa:"60天免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"有(DTV, 5年, ฿10K)",monthlyBudget:1800,rent:800,food:400,transport:50,coworking:150,internet:130,englishLevel:3,publicTransport:3.5,healthcareIndex:77.3,gpCost:20,erCost:100,englishDoctor:4,pharmacyAccess:4.5,timezone:"UTC+7",tzOffset:15,plugType:"O/C(常接受A/B)",tapWater:"不安全",tipping:"湊整數/10%觀光區",cardAcceptance:3.5,bestMonths:"11-2月",climate:"熱帶，永遠熱，雨季5-10月",
-    gdpPerCapita:7942,avgSalary:900,wealthLevel:"低",
-    topUnis:"朱拉隆功大學 Chulalongkorn University, 瑪希敦大學 Mahidol University, Thammasat University",
-    langSchools:"Thai語學校多(AUA, Duke Language School), 英語在觀光區通用",nomadCommunity:"極大(全球前3)",educationScore:3,
-    attractions:"Grand Palace 大皇宮+Wat Phra Kaew 玉佛寺(必去, 穿長褲)｜Wat Pho 臥佛寺(46m金色臥佛+泰式按摩學校)｜Wat Arun 黎明寺(鄭王廟, 日落絕景)｜Chatuchak Weekend Market 恰圖恰週末市場(15,000+攤位)｜Chinatown 耀華力路(曼谷最佳街頭美食)｜Khao San Road 考山路(背包客聖地)｜Jim Thompson House 金湯普森之家(泰絲博物館)｜Asiatique 河濱夜市",
-    nature:"Lumphini Park 倫披尼公園(曼谷的中央公園, 有巨蜥!)｜Floating Markets 水上市場(Damnoen Saduak/Amphawa)｜Bang Krachao(曼谷之肺, 騎單車穿越綠洲)｜Khao Yai National Park(3hr, UNESCO, 大象/犀鳥)",
-    foodScene:"全球街頭美食之都!｜Pad Thai 泰式炒河粉(Thip Samai, 排隊名店)｜Som Tum 青木瓜沙拉｜Tom Yum Goong 酸辣蝦湯｜Mango Sticky Rice 芒果糯米飯｜Chinatown 耀華力路(Jay Fai, 街頭米其林一星)｜Or Tor Kor Market(全球十大市場)｜Boat Noodle 船麵(Victory Monument)｜Rooftop Bars(Sky Bar/Octave)配泰式小菜",
-    nightlife:"Khao San Road 考山路(背包客瘋狂)｜Sukhumvit Soi 11(外國人酒吧街)｜RCA(夜店一條街)｜Thonglor(高端酒吧/餐廳)｜Sky Bar at Lebua(電影宿醉場景, 屋頂酒吧)｜Muay Thai Boxing(Rajadamnern/Lumpinee拳擊場)｜夜市(Jodd Fairs, Rot Fai)｜Go-Go Bars(Nana/Patpong, 存在但不推薦)",
-    dayTrips:"Ayutthaya 大城(1.5hr, 古都遺跡, UNESCO, 樹中佛頭必看)｜Floating Market 水上市場(1.5hr, Amphawa比Damnoen更authentic)｜Kanchanaburi 桂河大橋(2.5hr, 二戰歷史)｜Pattaya(2hr, 海灘, 但品質一般)｜Khao Yai(3hr, 國家公園+酒莊)",
-    culture:"Grand Palace + Wat Pho + Wat Arun 三大廟一日遊｜Jim Thompson House(泰絲+建築)｜MOCA Bangkok 當代藝術博物館｜泰式按摩(Wat Pho傳統按摩 ฿300起)｜Muay Thai泰拳課程體驗｜泰式烹飪課程(半天, 多家可選)",
-    seasonalEvents:"4月 Songkran 潑水節(全球最大水戰, 必去!!!)｜11月 Loy Krathong 水燈節(放水燈許願)｜12月 曼谷設計週｜Chinese New Year(耀華力路超熱鬧)",
-    uniqueExp:"Songkran潑水節全城水戰(4/13-15, 人生必體驗一次)｜凌晨在耀華力路吃街頭小吃｜搭長尾船穿越曼谷運河看水上人家｜Ayutthaya看樹根包住的佛頭｜Sky Bar 63樓看曼谷夜景喝雞尾酒",
-    tourismScore:95,notes:"60天免簽+延30天=90天。DTV簽5年效期。2025起限制每年2次visa run。下藥是真實風險。用Grab不用嘟嘟車。醫療旅遊重鎮。"},
-  // USA
-  {city:"Seattle",photoUrl:"https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=800&h=400&fit=crop",country:"USA",region:"usa",numbeoSafety:46.1,gpiRank:116,gpiScore:2.443,pettyTheft:"中高(車窗破壞)",violentCrime:"低中",eastAsianRisk:"中等",scams:"少",avoidAreas:"Pioneer Square, International District夜間",twVisa:"90天(ESTA $21)",hkVisa:"需B1/B2($435)",caVisa:"6個月免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:3800,rent:2000,food:800,transport:100,coworking:350,internet:200,englishLevel:5,publicTransport:3,healthcareIndex:67,gpCost:200,erCost:2700,englishDoctor:5,pharmacyAccess:5,timezone:"UTC-8",tzOffset:0,plugType:"A/B (本地)",tapWater:"安全",tipping:"18-25%",cardAcceptance:5,bestMonths:"6-9月",climate:"溫帶海洋性，夏季涼爽乾燥",
-    gdpPerCapita:89599,avgSalary:5500,wealthLevel:"極高",
-    topUnis:"華盛頓大學 University of Washington (QS全球63), Seattle University",
-    langSchools:"英語系國家",nomadCommunity:"低(不是nomad目的地, 是搬家目的地)",educationScore:4.5,
-    attractions:"Pike Place Market 派克市場(1907, 飛魚表演, Starbucks第一家店)｜Space Needle 太空針塔(Seattle地標)｜Chihuly Garden and Glass 奇胡利玻璃藝術園(必去, 驚艷)｜Museum of Pop Culture MoPOP(Frank Gehry設計)｜Pioneer Square 先鋒廣場(最古老街區)｜Capitol Hill(LGBTQ+/nightlife/咖啡)｜Amazon Spheres(亞馬遜球形溫室, 可預約參觀)｜Kerry Park(最佳拍攝點, 看Space Needle+Mt. Rainier)",
-    nature:"Mt. Rainier 雷尼爾山(2hr, 活火山, 壯麗, 必去)｜Olympic National Park(2.5hr+渡輪, 溫帶雨林+海灘+雪山三合一)｜San Juan Islands(渡輪, 看虎鯨!)｜North Cascades(3hr, 美國阿爾卑斯)｜Discovery Park(市內, Puget Sound海景)｜Snoqualmie Falls(30min, 雙峰瀑布)｜夏季Mt. Baker/Rainier健行",
-    foodScene:"Coffee 咖啡文化發源地(Starbucks/Stumptown/Elm Coffee)｜Pike Place Market海鮮(Dungeness crab/oysters)｜Pho 越南河粉(International District)｜Teriyaki(Seattle式照燒, 全城都有)｜Seafood(Elliott's Oyster House, Ivar's)｜Asian food in ID(Uwajimaya)｜Craft beer(Fremont Brewing, Elysian)",
-    nightlife:"Capitol Hill(最活躍夜生活, 酒吧/live music)｜Ballard(精釀啤酒區, 10+啤酒廠步行範圍)｜Pioneer Square(Jazz, live music)｜Fremont(怪咖區, 有列寧雕像和巨魔雕塑)｜比較laid-back, 不是瘋狂夜店型城市",
-    dayTrips:"Mt. Rainier(2hr, 美國最壯觀火山之一, 必去)｜San Juan Islands(渡輪, 看虎鯨+海豹)｜Leavenworth(2hr, 巴伐利亞主題小鎮, 聖誕燈飾)｜Olympic National Park(2.5hr, 三種生態系)｜Whidbey Island(渡輪1hr, 薰衣草+海景)｜Portland(3hr車, 另一個hipster天堂)｜Vancouver BC(3hr車, 跨國一日遊到加拿大!)",
-    culture:"MoPOP 流行文化博物館(音樂+科幻+遊戲)｜Seattle Art Museum (SAM)｜Chihuly Garden and Glass｜Boeing Factory Tour(世界最大建築)｜Amazon HQ / Microsoft Redmond Campus 科技朝聖｜Bill & Melinda Gates Foundation Discovery Center",
-    seasonalEvents:"7-8月 夏季完美天氣(Seattle最佳時期)｜9月 Bumbershoot(音樂+藝術節)｜12月 Leavenworth Christmas Lighting(巴伐利亞聖誕燈飾)｜4月 Cherry Blossom(UW校園)｜Pike Place Market全年活動",
-    uniqueExp:"Pike Place看飛魚表演+第一家Starbucks朝聖｜Chihuly玻璃花園(夜間更美)｜Mt. Rainier日出健行(夏季)｜San Juan Islands看虎鯨破水而出｜在Ballard一個下午走遍5家精釀啤酒廠｜Kerry Park拍Space Needle+Rainier同框",
-    tourismScore:82,notes:"零時差！華盛頓州免所得稅。可同時看Redmond的房。6-9月天氣絕佳。冬季多雨灰暗。GPI低是因為全美槍枝/軍事化指標。"},
-  {city:"Redmond",photoUrl:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=400&fit=crop",country:"USA",region:"usa",numbeoSafety:55,gpiRank:116,gpiScore:2.443,pettyTheft:"低",violentCrime:"低",eastAsianRisk:"低",scams:"極少",avoidAreas:"幾乎沒有",twVisa:"90天(ESTA $21)",hkVisa:"需B1/B2($435)",caVisa:"6個月免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:3500,rent:1800,food:750,transport:80,coworking:300,internet:210,internet:210,englishLevel:5,publicTransport:2.5,healthcareIndex:67,gpCost:200,erCost:2700,englishDoctor:5,pharmacyAccess:5,timezone:"UTC-8",tzOffset:0,plugType:"A/B (本地)",tapWater:"安全",tipping:"18-25%",cardAcceptance:5,bestMonths:"6-9月",climate:"溫帶海洋性，夏季涼爽乾燥",
-    gdpPerCapita:85000,avgSalary:5500,wealthLevel:"極高(科技重鎮)",
-    topUnis:"DigiPen Institute of Technology, 鄰近University of Washington (15min車程)",
-    langSchools:"英語系",nomadCommunity:"低(不是nomad目的地)",educationScore:3.5,
-    attractions:"Microsoft Campus 微軟總部(Visitor Center可參觀)｜Marymoor Park(640英畝超大公園, 攀岩牆/越野車道)｜Redmond Town Center(購物+餐廳)｜Idylwood Park(湖邊)｜鄰近Seattle所有景點(20-30min車)",
-    nature:"Marymoor Park(巨大公園, 狗公園全美最大之一)｜Sammamish River Trail(騎行/跑步)｜Lake Sammamish State Park(游泳/划船)｜Snoqualmie Falls(20min, 雙峰瀑布)｜Cascade Mountains(1hr, 健行/滑雪)｜Mt. Rainier(2hr)",
-    foodScene:"多元亞洲美食(大量印度/中國/韓國/越南餐廳)｜Redmond Town Center 餐廳區｜Woodinville Wine Country(15min, 100+酒莊)｜Crossroads Food Court(多國料理, 便宜)｜離Seattle Pike Place Market 20min",
-    nightlife:"相對安靜的郊區城市｜Woodinville 酒莊品酒(週末)｜Redmond Town Center(少量酒吧)｜大部分人去Seattle的Capitol Hill/Ballard",
-    dayTrips:"Seattle(20min, 所有Seattle景點)｜Woodinville Wine Country(15min, 酒莊+品酒)｜Snoqualmie Falls(20min)｜Leavenworth(1.5hr, 巴伐利亞小鎮)｜Mt. Rainier(2hr)｜San Juan Islands(3hr+渡輪)",
-    culture:"Microsoft Visitor Center｜Redmond Historical Society｜主要依賴鄰近Seattle的文化資源(MoPOP, SAM, Chihuly等)",
-    seasonalEvents:"同Seattle (7-8月最佳天氣, 12月Leavenworth聖誕)｜Redmond Derby Days(7月, 社區慶典)",
-    uniqueExp:"Microsoft Campus巡禮(你的新辦公室!)｜Woodinville一日品酒(100+酒莊)｜Marymoor Park週末(Seattle人的後花園)｜Snoqualmie Falls看Twin Peaks取景地",
-    tourismScore:45,notes:"你的新家！零時差。華盛頓州免所得稅。郊區型城市，安靜安全但不刺激。離Seattle 20min。Costco總部也在這。Microsoft/Nintendo美國總部。"},
-  {city:"Denver",photoUrl:"https://images.unsplash.com/photo-1619856699906-09e1f4ef578c?w=800&h=400&fit=crop",country:"USA",region:"usa",numbeoSafety:52.3,gpiRank:116,gpiScore:2.443,pettyTheft:"中等(車窗)",violentCrime:"低中",eastAsianRisk:"低中",scams:"少",avoidAreas:"Colfax Ave, Five Points夜間",twVisa:"90天(ESTA)",hkVisa:"需B1/B2",caVisa:"6個月免簽",visaDays:90,remoteWork:"灰色地帶",dnVisa:"無",monthlyBudget:2800,rent:1400,food:700,transport:100,coworking:280,internet:190,englishLevel:5,publicTransport:2.5,healthcareIndex:68.1,gpCost:180,erCost:2500,englishDoctor:5,pharmacyAccess:5,timezone:"UTC-7",tzOffset:1,plugType:"A/B",tapWater:"安全",tipping:"18-25%",cardAcceptance:5,bestMonths:"3-5月, 9-10月",climate:"半乾旱，300+晴天",
-    gdpPerCapita:85000,avgSalary:4500,wealthLevel:"極高",
-    topUnis:"科羅拉多大學 University of Colorado (Boulder校區30min, QS全球175), University of Denver, Colorado School of Mines",
-    langSchools:"英語系",nomadCommunity:"低中",educationScore:4,
-    attractions:"Red Rocks Amphitheatre 紅石露天劇場(天然岩石劇場, 看演唱會聖地)｜Union Station 聯合車站(翻新後的美食+酒吧hub)｜Denver Art Museum(Daniel Libeskind設計)｜16th Street Mall(步行街)｜Larimer Square(最古老街區)｜Denver Botanic Gardens｜Coors Field(棒球場, 啤酒!)｜State Capitol(標高exactly一英里, Mile High City)",
-    nature:"Rocky Mountain National Park 洛磯山國家公園(1.5hr, 必去!!!)｜Red Rocks Park(15min, 健行+日出瑜伽)｜Garden of the Gods(1hr, 紅色巨岩)｜Mt. Evans(最高鋪設公路, 4,350m)｜Clear Creek(泛舟)｜冬季滑雪(Breckenridge/Vail/Keystone, 1.5-2hr)｜300+晴天, 戶外天堂",
-    foodScene:"Green Chile 綠辣椒(科羅拉多特色, 什麼都加)｜Craft Beer 精釀啤酒之都(400+啤酒廠, 全美最多)｜Denver Biscuit Company(巨型餅乾早餐)｜Union Station美食區｜RiNo Art District(River North, 餐廳+啤酒廠群)｜Rocky Mountain Oysters(牛睪丸, 勇者挑戰)｜Cannabis edibles(合法大麻食品, Colorado特色)",
-    nightlife:"RiNo Art District(最潮, 啤酒廠+酒吧+街頭藝術)｜LoDo(Lower Downtown, 運動酒吧)｜South Broadway(indie/dive bars)｜Red Rocks 看演唱會(全球最佳戶外音樂場地)｜Colfax Ave(有點粗獷但authentic)｜精釀啤酒巡禮(Great Divide, Ratio, Denver Beer Co.)",
-    dayTrips:"Rocky Mountain NP(1.5hr, Trail Ridge Road, 必去)｜Boulder 博爾德(30min, 大學城+Flatirons健行)｜Garden of the Gods(1hr, Colorado Springs)｜Breckenridge(1.5hr, 滑雪/夏季小鎮)｜Mt. Evans(1.5hr, 開車上4,350m)｜Georgetown(1hr, 礦業小鎮+蒸汽火車)｜Estes Park(1.5hr, Rocky Mountain NP入口, 閃靈飯店原型Stanley Hotel)",
-    culture:"Denver Art Museum(Libeskind設計)｜Meow Wolf Denver(沉浸式藝術, 超酷)｜History Colorado Center｜Clyfford Still Museum｜Red Rocks 音樂(不只是場地, 是文化)｜合法大麻文化(2012起, 全美最早)",
-    seasonalEvents:"4月 420 Rally(大麻文化節)｜1月 National Western Stock Show(牛仔文化)｜7月 Cherry Creek Arts Festival｜10月 Great American Beer Festival(全美最大啤酒節)｜滑雪季11-4月",
-    uniqueExp:"Red Rocks看日出或演唱會(全球最佳戶外音樂體驗)｜Rocky Mountain NP Trail Ridge Road開車穿越大陸分水嶺｜RiNo一個下午走5家精釀啤酒廠｜Meow Wolf沉浸式藝術體驗｜Boulder Flatirons健行看整個Front Range",
-    tourismScore:80,notes:"僅+1hr時差。戶外天堂。300+晴天。滑雪。需要車但light rail可用。科羅拉多州有州所得稅(4.4%)。海拔1,600m，初到可能有高山反應。"}
-];
+(function(){
+'use strict';
 
-// ============= SCORING =============
-function calcScores(c) {
-  // Safety (0-100) - use Numbeo directly
-  c.safetyScore = c.numbeoSafety || 50;
+/* ===== Smooth forest generator (Catmull-Rom splines) ===== */
+function srand(s){return function(){s=(s*16807)%2147483647;return(s-1)/2147483646}}
 
-  // Cost (0-100) - inverse: cheaper = higher score
-  const maxB = 5800, minB = 950;
-  c.costScore = Math.round(100 - ((c.monthlyBudget - minB) / (maxB - minB)) * 100);
-  c.costScore = Math.max(0, Math.min(100, c.costScore));
-
-  // Visa (0-100)
-  let vs = 0;
-  vs += Math.min(c.visaDays, 180) / 180 * 50;
-  if (c.remoteWork === "明確允許" || c.remoteWork === "明確允許(2025起)") vs += 30;
-  else if (c.remoteWork === "附條件允許") vs += 20;
-  else if (c.remoteWork === "灰色地帶") vs += 10;
-  if (c.dnVisa && c.dnVisa !== "無") vs += 20;
-  c.visaScore = Math.min(100, Math.round(vs));
-
-  // Healthcare (0-100)
-  c.healthScore = c.healthcareIndex || 50;
-
-  // Timezone (0-100)
-  c.tzScore = Math.max(0, Math.round(100 - c.tzOffset * 5.5));
-
-  // English (0-100)
-  c.engScore = c.englishLevel * 20;
-
-  // Overall weighted
-  c.overall = Math.round(
-    c.safetyScore * 0.25 +
-    c.costScore * 0.20 +
-    c.healthScore * 0.20 +
-    c.engScore * 0.10 +
-    (c.tourismScore || 50) / 100 * 100 * 0.10 +
-    (c.publicTransport / 5 * 100) * 0.08 +
-    (c.internet / 410 * 100) * 0.07
-  );
+/* Individual curved-tier tree generator — each tree is 3 bezier sub-shapes */
+function makeForest(seed,count,vw,vh,minH,maxH,gapL,gapR){
+  const r=srand(seed);
+  /* Solid ground fill */
+  let d=`M0,${vh} L${vw},${vh} L${vw},${(vh-minH*.12).toFixed(0)} L0,${(vh-minH*.12).toFixed(0)} Z `;
+  for(let i=0;i<count;i++){
+    const cx=(i+.3+r()*.5)*(vw/count);
+    if(gapL!=null&&cx>gapL&&cx<gapR)continue;
+    const h=minH+r()*(maxH-minH);
+    const w=h*(.26+r()*.1);
+    const b=vh;
+    /* 3 overlapping conifer tiers — natural pine shape */
+    d+=`M${(cx-w).toFixed(0)},${(b-h*.04).toFixed(0)} Q${(cx-w*.4).toFixed(0)},${(b-h*.22).toFixed(0)} ${cx.toFixed(0)},${(b-h*.36).toFixed(0)} Q${(cx+w*.4).toFixed(0)},${(b-h*.22).toFixed(0)} ${(cx+w).toFixed(0)},${(b-h*.04).toFixed(0)} Z `;
+    d+=`M${(cx-w*.74).toFixed(0)},${(b-h*.2).toFixed(0)} Q${(cx-w*.28).toFixed(0)},${(b-h*.48).toFixed(0)} ${cx.toFixed(0)},${(b-h*.64).toFixed(0)} Q${(cx+w*.28).toFixed(0)},${(b-h*.48).toFixed(0)} ${(cx+w*.74).toFixed(0)},${(b-h*.2).toFixed(0)} Z `;
+    d+=`M${(cx-w*.46).toFixed(0)},${(b-h*.45).toFixed(0)} Q${(cx-w*.14).toFixed(0)},${(b-h*.82).toFixed(0)} ${cx.toFixed(0)},${(b-h).toFixed(0)} Q${(cx+w*.14).toFixed(0)},${(b-h*.82).toFixed(0)} ${(cx+w*.46).toFixed(0)},${(b-h*.45).toFixed(0)} Z `;
+  }
+  return d;
 }
-cities.forEach(calcScores);
 
-// ============= CHINESE TRANSLATIONS =============
-const zhCityMap = {
-  "Lisbon":"里斯本","Porto":"波多","Auckland":"奧克蘭","Wellington":"威靈頓",
-  "Prague":"布拉格","Zagreb":"薩格勒布","Tallinn":"塔林","Taipei":"台北",
-  "Munich":"慕尼黑","Madrid":"馬德里","Ljubljana":"盧比安納",
-  "Warsaw":"華沙","Krakow":"克拉科夫","Amsterdam":"阿姆斯特丹",
-  "Tokyo":"東京","Osaka":"大阪","Kyoto":"京都","Fukuoka":"福岡","Sapporo":"札幌","Okinawa":"沖繩",
-  "Copenhagen":"哥本哈根","Oslo":"奧斯陸","Stockholm":"斯德哥爾摩",
-  "Bangkok":"曼谷","Seattle":"西雅圖","Redmond":"雷德蒙德","Denver":"丹佛"
-};
+/* Far forest — individual trees, moderate count */
+document.getElementById('ff').setAttribute('d',makeForest(42,35,1440,500,80,380));
+document.getElementById('ff2').setAttribute('d',makeForest(99,30,1440,500,50,240));
+/* Mid forest — slightly fewer, taller */
+document.getElementById('mf').setAttribute('d',makeForest(137,30,1440,450,100,400,420,1020));
+document.getElementById('mf2').setAttribute('d',makeForest(211,25,1440,450,60,260,450,990));
+/* Near forest — big trees with gap for cabin */
+document.getElementById('nf').setAttribute('d',makeForest(7,28,1440,500,140,480,320,1120));
+document.getElementById('nf2').setAttribute('d',makeForest(53,24,1440,500,80,300,350,1090));
 
-const zhCountryMap = {
-  "Portugal":"葡萄牙","New Zealand":"紐西蘭","Czech Republic":"捷克",
-  "Croatia":"克羅埃西亞","Estonia":"愛沙尼亞","Taiwan":"台灣",
-  "Germany":"德國","Spain":"西班牙","Slovenia":"斯洛維尼亞",
-  "Poland":"波蘭","Netherlands":"荷蘭","Japan":"日本",
-  "Denmark":"丹麥","Norway":"挪威","Sweden":"瑞典",
-  "Thailand":"泰國","USA":"美國"
-};
+/* ===== Weather: Rain + Snow + Fire ===== */
+const wc=document.getElementById('weatherCanvas'),wx=wc.getContext('2d');
+const mobile=innerWidth<768;
+function rsz(){wc.width=innerWidth;wc.height=innerHeight}
+rsz();
 
-cities.forEach(c => {
-  c.zh = zhCityMap[c.city] || c.city;
-  c.zhC = zhCountryMap[c.country] || c.country;
+const rain=[],snow=[];
+const RC=mobile?80:200,SC=mobile?8:20;
+for(let i=0;i<RC;i++)rain.push({x:Math.random()*innerWidth*1.3,y:Math.random()*innerHeight,l:20+Math.random()*30,s:12+Math.random()*7,o:.05+Math.random()*.15,w:2+Math.random()*2});
+for(let i=0;i<SC;i++)snow.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.6+Math.random()*1.8,s:.3+Math.random()*.8,o:.15+Math.random()*.25,p:Math.random()*6.28,ps:.006+Math.random()*.01,d:.2+Math.random()*.5});
+
+function drawWeather(){
+  wx.clearRect(0,0,wc.width,wc.height);
+  const W=wc.width,H=wc.height;
+  /* Rain */
+  for(const d of rain){
+    wx.beginPath();wx.moveTo(d.x,d.y);wx.lineTo(d.x-d.w*.6,d.y+d.l);
+    wx.strokeStyle=`rgba(170,195,220,${d.o})`;wx.lineWidth=1.2;wx.stroke();
+    d.x-=d.w*.22;d.y+=d.s;if(d.y>H+d.l){d.y=-d.l;d.x=Math.random()*W*1.3}
+  }
+  /* Snow */
+  for(const s of snow){
+    wx.beginPath();wx.arc(s.x,s.y,s.r,0,6.28);
+    wx.fillStyle=`rgba(240,245,255,${s.o})`;wx.fill();
+    s.p+=s.ps;s.x+=Math.sin(s.p)*s.d;s.y+=s.s;
+    if(s.y>H+s.r*2){s.y=-s.r*2;s.x=Math.random()*W}
+    if(s.x<-10)s.x=W+10;if(s.x>W+10)s.x=-10;
+  }
+}
+
+/* ===== 3D Parallax — rotate scene container ===== */
+const scene3d=document.getElementById('scene3d');
+let mx=.5,my=.5,tx=.5,ty=.5;
+document.addEventListener('mousemove',function(e){tx=e.clientX/innerWidth;ty=e.clientY/innerHeight},{passive:true});
+
+function updateParallax(){
+  mx+=(tx-mx)*.04;my+=(ty-my)*.04;
+  if(!scene3d||scrollY>innerHeight)return;
+  const rx=(my-.5)*-4;/* tilt up/down */
+  const ry=(mx-.5)*5;/* tilt left/right */
+  scene3d.style.transform=`rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+}
+
+/* ===== Scroll ===== */
+const nav=document.getElementById('nav');
+const prog=document.getElementById('scrollProgress');
+function onScroll(){
+  nav.classList.toggle('scrolled',scrollY>50);
+  const h=document.documentElement.scrollHeight-innerHeight;
+  if(h>0&&prog)prog.style.width=(scrollY/h*100)+'%';
+}
+const obs=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
+
+/* ===== Cursor ===== */
+const cdot=document.getElementById('cursorDot');
+let cmx=0,cmy=0,chx=0,chy=0;
+document.addEventListener('mousemove',function(e){
+  cmx=e.clientX;cmy=e.clientY;
+  if(!cdot.classList.contains('visible'))cdot.classList.add('visible');
+},{passive:true});
+document.querySelectorAll('a,.btn,.sk,.cl,.nav-links a').forEach(function(el){
+  el.addEventListener('mouseenter',function(){cdot.classList.add('hover')});
+  el.addEventListener('mouseleave',function(){cdot.classList.remove('hover')});
 });
+function updateCursor(){chx+=(cmx-chx)*.12;chy+=(cmy-chy)*.12;cdot.style.left=chx+'px';cdot.style.top=chy+'px'}
 
-// ============= RENDERING =============
-function scoreClass(v) { return v >= 80 ? 'excellent' : v >= 65 ? 'good' : v >= 50 ? 'ok' : v >= 35 ? 'poor' : 'bad'; }
-function riskBadge(r) {
-  const m = {'極低':'green','低':'green','無':'green','無(本國)':'green','無(本地)':'green','無(華人為主)':'green','低中':'yellow','中等':'orange','中高':'orange','高':'red','非常高':'red'};
-  return `<span class="badge ${m[r]||'yellow'}">${r}</span>`;
+/* ===== Fire wind effect (rotate from base) ===== */
+var fw=document.querySelector('.fire-wrap'),fSvg=fw?fw.querySelector('svg'):null,fireTilt=0,fireTgt=0,lastFX=0;
+if(fw){
+  fw.addEventListener('mousemove',function(e){var dx=e.clientX-lastFX;lastFX=e.clientX;fireTgt=Math.max(-6,Math.min(6,dx*1.2))},{passive:true});
+  fw.addEventListener('mouseleave',function(){fireTgt=0});
 }
-function remoteBadge(r) {
-  const m = {'明確允許':'green','明確允許(2025起)':'green','附條件允許':'blue','灰色地帶':'yellow','明確禁止':'red'};
-  return `<span class="badge ${m[r]||'yellow'}">${r}</span>`;
-}
-function regionDot(r) { return `<span class="region-dot ${r}"></span>`; }
-function starRating(n) { return '★'.repeat(Math.round(n)) + '☆'.repeat(5-Math.round(n)); }
-
-let currentSort = {key: 'overall', dir: -1};
-let filtered = [...cities];
-
-function applyFilters() {
-  const region = document.getElementById('filterRegion').value;
-  const budget = document.getElementById('filterBudget').value;
-  const search = document.getElementById('searchBox').value.toLowerCase();
-
-  const sortBy = document.getElementById('sortBy').value;
-
-  filtered = cities.filter(c => {
-    if (region !== 'all' && c.region !== region) return false;
-    if (budget !== 'all' && c.monthlyBudget > parseInt(budget)) return false;
-    if (search && !(c.city.toLowerCase().includes(search) || c.country.toLowerCase().includes(search) || c.zh.includes(search) || c.zhC.includes(search))) return false;
-    return true;
-  });
-
-  const sortMap = {
-    overall: (a,b) => b.overall - a.overall,
-    safety: (a,b) => b.safetyScore - a.safetyScore,
-    cost: (a,b) => a.monthlyBudget - b.monthlyBudget,
-    costDesc: (a,b) => b.monthlyBudget - a.monthlyBudget,
-    healthcare: (a,b) => b.healthScore - a.healthScore,
-    english: (a,b) => b.engScore - a.engScore,
-    tourism: (a,b) => (b.tourismScore||0) - (a.tourismScore||0),
-    gdp: (a,b) => (b.gdpPerCapita||0) - (a.gdpPerCapita||0),
-  };
-  filtered.sort(sortMap[sortBy] || sortMap.overall);
-
-  renderAll();
+function updateFire(){
+  if(!fSvg)return;
+  fireTilt+=(fireTgt-fireTilt)*.12;
+  fireTgt*=.92;
+  if(Math.abs(fireTilt)<.05)fireTilt=0;
+  fSvg.style.transformOrigin='bottom center';
+  fSvg.style.transform='rotate('+fireTilt.toFixed(2)+'deg)';
 }
 
-function renderStats() {
-  const el = document.getElementById('statsRow');
-  const safest = [...filtered].sort((a,b)=>b.safetyScore-a.safetyScore)[0];
-  const cheapest = [...filtered].sort((a,b)=>a.monthlyBudget-b.monthlyBudget)[0];
-  const bestVisa = [...filtered].sort((a,b)=>b.visaScore-a.visaScore)[0];
-  const bestTZ = [...filtered].sort((a,b)=>b.tzScore-a.tzScore)[0];
-  el.innerHTML = `
-    <div class="stat-card"><div class="label">最安全</div><div class="value">${safest?.zh||'-'}</div><div class="sub">Numbeo ${safest?.numbeoSafety||0}</div></div>
-    <div class="stat-card"><div class="label">最便宜</div><div class="value">${cheapest?.zh||'-'}</div><div class="sub">$${cheapest?.monthlyBudget||0}/月</div></div>
-    <div class="stat-card"><div class="label">簽證最友善</div><div class="value">${bestVisa?.zh||'-'}</div><div class="sub">${bestVisa?.visaDays||0}天 / ${bestVisa?.remoteWork||''}</div></div>
-    <div class="stat-card"><div class="label">時區最佳</div><div class="value">${bestTZ?.zh||'-'}</div><div class="sub">${bestTZ?.tzOffset||0}hr 時差</div></div>
-    <div class="stat-card"><div class="label">篩選結果</div><div class="value">${filtered.length}</div><div class="sub">/ ${cities.length} 城市</div></div>
-  `;
-}
-
-function renderMainTable() {
-  const body = document.getElementById('mainBody');
-  body.innerHTML = filtered.map((c,i) => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${i+1}</td>
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td><span class="score ${scoreClass(c.overall)}">${c.overall}</span></td>
-      <td><span class="score ${scoreClass(c.safetyScore)}">${c.safetyScore}</span></td>
-      <td>$${c.monthlyBudget.toLocaleString()}</td>
-      <td><span style="font-weight:600">${c.visaDays}天</span><br>${remoteBadge(c.remoteWork)}</td>
-      <td><span class="score ${scoreClass(c.healthScore)}">${c.healthScore}</span></td>
-      <td>${starRating(c.englishLevel)}</td>
-      <td>${remoteBadge(c.remoteWork)}</td>
-    </tr>
-  `).join('');
-}
-
-function renderSafetyTable() {
-  const body = document.getElementById('safetyBody');
-  const sorted = [...filtered].sort((a,b)=>b.safetyScore-a.safetyScore);
-  body.innerHTML = sorted.map(c => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td><span class="score ${scoreClass(c.numbeoSafety)}">${c.numbeoSafety}</span></td>
-      <td>${c.gpiRank ? '#'+c.gpiRank : '-'}</td>
-      <td>${riskBadge(c.pettyTheft)}</td>
-      <td>${riskBadge(c.violentCrime)}</td>
-      <td>${riskBadge(c.eastAsianRisk)}</td>
-      <td>${riskBadge(c.scams)}</td>
-      <td style="max-width:200px;font-size:0.75rem;color:var(--text2)">${c.avoidAreas}</td>
-    </tr>
-  `).join('');
-}
-
-function renderVisaTable() {
-  const body = document.getElementById('visaBody');
-  // Group by country (deduplicate)
-  const seen = new Set();
-  const unique = filtered.filter(c => { if (seen.has(c.country)) return false; seen.add(c.country); return true; });
-  unique.sort((a,b)=>b.visaScore-a.visaScore);
-  body.innerHTML = unique.map(c => `
-    <tr>
-      <td><span class="city-name">${c.zhC}</span> <span class="country-tag">${c.country}</span></td>
-      <td>${c.twVisa}</td>
-      <td>${c.hkVisa}</td>
-      <td>${c.caVisa}</td>
-      <td>${remoteBadge(c.remoteWork)}</td>
-      <td>${c.dnVisa && c.dnVisa !== '無' ? '<span class="badge green">'+c.dnVisa+'</span>' : '<span class="badge yellow">無</span>'}</td>
-    </tr>
-  `).join('');
-}
-
-function renderCostTable() {
-  const body = document.getElementById('costBody');
-  const sorted = [...filtered].sort((a,b)=>a.monthlyBudget-b.monthlyBudget);
-  body.innerHTML = sorted.map(c => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td><strong>$${c.monthlyBudget.toLocaleString()}</strong></td>
-      <td>$${c.rent.toLocaleString()}</td>
-      <td>$${c.food}</td>
-      <td>$${c.transport}</td>
-      <td>$${c.coworking}</td>
-      <td>${c.internet} Mbps</td>
-      <td>${starRating(c.englishLevel)}</td>
-    </tr>
-  `).join('');
-}
-
-function renderHealthTable() {
-  const body = document.getElementById('healthBody');
-  const sorted = [...filtered].sort((a,b)=>b.healthcareIndex-a.healthcareIndex);
-  body.innerHTML = sorted.map(c => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td><span class="score ${scoreClass(c.healthcareIndex)}">${c.healthcareIndex}</span></td>
-      <td>$${c.gpCost}</td>
-      <td>$${c.erCost}</td>
-      <td>${starRating(c.englishDoctor)}</td>
-      <td>${starRating(c.pharmacyAccess)}</td>
-      <td><span class="badge blue">建議購買</span></td>
-    </tr>
-  `).join('');
-}
-
-function renderPracticalTable() {
-  const body = document.getElementById('practicalBody');
-  body.innerHTML = filtered.map(c => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td style="font-size:0.75rem">${c.plugType}</td>
-      <td>${c.tapWater === '安全' ? '<span class="badge green">可飲用</span>' : c.tapWater === '建議過濾' ? '<span class="badge yellow">需過濾</span>' : '<span class="badge red">不可飲</span>'}</td>
-      <td style="font-size:0.78rem">${c.tipping}</td>
-      <td>${starRating(c.cardAcceptance)}</td>
-      <td>${starRating(c.publicTransport)}</td>
-      <td><span class="badge blue">${c.bestMonths}</span></td>
-    </tr>
-  `).join('');
-}
-
-function renderWealthTable() {
-  const body = document.getElementById('wealthBody');
-  const sorted = [...filtered].sort((a,b) => (b.gdpPerCapita||0) - (a.gdpPerCapita||0));
-  body.innerHTML = sorted.map(c => `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td>$${(c.gdpPerCapita||0).toLocaleString()}</td>
-      <td>$${(c.avgSalary||0).toLocaleString()}</td>
-      <td><span class="badge ${c.wealthLevel==='極高'||c.wealthLevel==='極高(全球最高之一)'||c.wealthLevel==='極高(科技重鎮)'?'green':c.wealthLevel==='高'?'blue':c.wealthLevel==='中高'?'yellow':c.wealthLevel==='中'?'orange':'red'}">${c.wealthLevel||''}</span></td>
-      <td style="font-size:0.75rem;max-width:250px">${c.topUnis||''}</td>
-      <td style="font-size:0.75rem;max-width:200px">${c.langSchools||''}</td>
-      <td>${c.nomadCommunity||''}</td>
-      <td>${c.educationScore ? starRating(c.educationScore) : ''}</td>
-    </tr>
-  `).join('');
-}
-
-function renderTourismTable() {
-  const body = document.getElementById('tourismBody');
-  const sorted = [...filtered].sort((a,b) => (b.tourismScore||0) - (a.tourismScore||0));
-  body.innerHTML = sorted.map(c => {
-    const top3 = (c.attractions||'').split('｜').slice(0,3).map(a => a.split('(')[0].trim()).join(' / ');
-    const foodTop = (c.foodScene||'').split('｜').slice(0,3).map(a => a.split('(')[0].trim()).join(' / ');
-    const dayTop = (c.dayTrips||'').split('｜')[0]||'';
-    const uniqTop = (c.uniqueExp||'').split('｜')[0]||'';
-    return `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span></td>
-      <td><span class="score ${scoreClass(c.tourismScore||50)}">${c.tourismScore||'?'}</span></td>
-      <td style="font-size:0.75rem;max-width:250px">${top3}</td>
-      <td style="font-size:0.75rem;max-width:200px">${foodTop}</td>
-      <td style="font-size:0.75rem;max-width:200px">${dayTop}</td>
-      <td style="font-size:0.75rem;max-width:200px">${uniqTop}</td>
-    </tr>`;
-  }).join('');
-}
-
-
-function renderFoodTable() {
-  const body = document.getElementById('foodBody');
-  const sorted = [...filtered].sort((a,b) => (b.tourismScore||0) - (a.tourismScore||0));
-  body.innerHTML = sorted.map(c => {
-    const foodItems = (c.foodScene||'').split('｜').slice(0,4).map(a => a.split('(')[0].trim()).join(' / ');
-    const nightItems = (c.nightlife||'').split('｜').slice(0,2).map(a => a.split('(')[0].trim()).join(' / ');
-    const seasonal = (c.seasonalEvents||'').split('｜').slice(0,2).join('; ');
-    return `
-    <tr onclick="showDetail('${c.city}')" style="cursor:pointer">
-      <td>${regionDot(c.region)}<span class="city-name">${c.zh}</span> <span class="country-tag">${c.city}</span><br><span class="country-tag">${c.zhC} ${c.country}</span></td>
-      <td><span class="score ${scoreClass(c.tourismScore||50)}">${c.tourismScore||'?'}</span></td>
-      <td style="font-size:0.75rem;max-width:300px">${foodItems}</td>
-      <td style="font-size:0.75rem;max-width:200px">${nightItems}</td>
-      <td style="font-size:0.75rem;max-width:250px">${seasonal}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderAll() {
-  renderStats();
-  renderMainTable();
-  renderSafetyTable();
-  renderVisaTable();
-  renderCostTable();
-  renderHealthTable();
-  renderFoodTable();
-  renderWealthTable();
-  renderTourismTable();
-  renderPracticalTable();
-}
-
-// ============= DETAIL MODAL =============
-function showDetail(cityName) {
-  const c = cities.find(x => x.city === cityName);
-  if (!c) return;
-  const pst9 = (9 + c.tzOffset) % 24;
-  const pst5 = (17 + c.tzOffset) % 24;
-  document.getElementById('modalInner').innerHTML = `
-    ${c.photoUrl ? '<img src="'+c.photoUrl+'" alt="'+c.city+'" style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin-bottom:1rem" onerror="this.style.display=\'none\'">' : ''}
-    <h2>${c.zh} ${c.city}, ${c.zhC} ${c.country}</h2>
-    <p style="color:var(--text2);margin-bottom:0.3rem">${c.climate}</p>
-    <p style="margin-bottom:1rem"><a href="https://www.google.com/maps/place/${encodeURIComponent(c.city+' '+c.country)}" target="_blank" style="font-size:0.8rem">📍 Google Maps</a> &nbsp; <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(c.city)}" target="_blank" style="font-size:0.8rem">📖 Wikivoyage</a> &nbsp; <a href="https://www.google.com/search?q=${encodeURIComponent(c.city+' tourism official site')}" target="_blank" style="font-size:0.8rem">🌐 官方旅遊</a></p>
-
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
-      <span class="score ${scoreClass(c.overall)}">綜合 ${c.overall}</span>
-      <span class="score ${scoreClass(c.safetyScore)}">治安 ${c.safetyScore}</span>
-      <span class="score ${scoreClass(c.costScore)}">成本 ${c.costScore}</span>
-      <span class="badge blue">簽證 ${c.visaDays}天</span>
-      <span class="score ${scoreClass(c.healthScore)}">醫療 ${c.healthScore}</span>
-    </div>
-
-    <h3>簽證</h3>
-    <div class="visa-row">
-      <div class="visa-card"><div class="passport">🇹🇼 台灣</div><div class="days">${c.twVisa}</div></div>
-      <div class="visa-card"><div class="passport">🇭🇰 香港</div><div class="days">${c.hkVisa}</div></div>
-      <div class="visa-card"><div class="passport">🇨🇦 加拿大</div><div class="days">${c.caVisa}</div></div>
-    </div>
-    <div style="margin-top:0.5rem">遠端工作 Remote Work: ${remoteBadge(c.remoteWork)} &nbsp; 數位遊牧簽 DN Visa: ${c.dnVisa && c.dnVisa !== '無' ? '<span class="badge green">'+c.dnVisa+'</span>' : '<span class="badge yellow">無</span>'}</div>
-
-    <h3>治安</h3>
-    <dl class="detail-grid">
-      <dt>Numbeo 安全指數</dt><dd><span class="score ${scoreClass(c.numbeoSafety)}">${c.numbeoSafety}</span></dd>
-      <dt>全球和平指數 GPI 排名</dt><dd>${c.gpiRank ? '#'+c.gpiRank+' ('+c.gpiScore+')' : 'N/A'}</dd>
-      <dt>扒竊程度</dt><dd>${riskBadge(c.pettyTheft)}</dd>
-      <dt>暴力犯罪</dt><dd>${riskBadge(c.violentCrime)}</dd>
-      <dt>東亞人風險</dt><dd>${riskBadge(c.eastAsianRisk)}</dd>
-      <dt>詐騙程度</dt><dd>${riskBadge(c.scams)}</dd>
-      <dt>避開區域</dt><dd>${c.avoidAreas}</dd>
-    </dl>
-
-    <h3>生活成本 (USD/月)</h3>
-    <dl class="detail-grid">
-      <dt>月總預算</dt><dd><strong>$${c.monthlyBudget.toLocaleString()}</strong></dd>
-      <dt>租房 (1BR)</dt><dd>$${c.rent.toLocaleString()}</dd>
-      <dt>飲食</dt><dd>$${c.food}</dd>
-      <dt>交通</dt><dd>$${c.transport}</dd>
-      <dt>共享空間 Coworking</dt><dd>$${c.coworking}</dd>
-      <dt>網速</dt><dd>${c.internet} Mbps</dd>
-    </dl>
-
-    <h3>醫療</h3>
-    <dl class="detail-grid">
-      <dt>醫療品質指數</dt><dd><span class="score ${scoreClass(c.healthcareIndex)}">${c.healthcareIndex}</span></dd>
-      <dt>門診 GP 看診費</dt><dd>$${c.gpCost}</dd>
-      <dt>急診 ER 費</dt><dd>$${c.erCost}</dd>
-      <dt>英語醫生</dt><dd>${starRating(c.englishDoctor)}</dd>
-      <dt>藥局便利</dt><dd>${starRating(c.pharmacyAccess)}</dd>
-    </dl>
-
-    <h3>便利度</h3>
-    <dl class="detail-grid">
-      <dt>英語友善</dt><dd>${starRating(c.englishLevel)}</dd>
-      <dt>公共交通</dt><dd>${starRating(c.publicTransport)}</dd>
-      <dt>刷卡友善</dt><dd>${starRating(c.cardAcceptance)}</dd>
-      <dt>時區</dt><dd>${c.timezone} (與PST差 ${c.tzOffset}hr)</dd>
-    </dl>
-
-    ${c.gdpPerCapita ? '<h3>當地富裕程度 Wealth</h3><dl class="detail-grid"><dt>人均GDP</dt><dd>$'+(c.gdpPerCapita||0).toLocaleString()+'</dd><dt>平均月薪(稅後)</dt><dd>$'+(c.avgSalary||0).toLocaleString()+'</dd><dt>富裕程度</dt><dd>'+(c.wealthLevel||'')+'</dd></dl>' : ''}
-
-    <h3>實用</h3>
-    <dl class="detail-grid">
-      <dt>插座</dt><dd>${c.plugType}</dd>
-      <dt>自來水</dt><dd>${c.tapWater}</dd>
-      <dt>小費</dt><dd>${c.tipping}</dd>
-      <dt>最佳月份</dt><dd>${c.bestMonths}</dd>
-    </dl>
-
-    ${c.attractions ? '<h3>必訪景點 Attractions</h3><div class="detail-notes">'+c.attractions.split('｜').map(a => {
-      const name = a.split('(')[0].trim();
-      const mapUrl = 'https://www.google.com/maps/search/'+encodeURIComponent(name+' '+c.city);
-      const imgUrl = 'https://source.unsplash.com/120x80/?'+encodeURIComponent(name.replace(/[^a-zA-Z ]/g,''));
-      return '<div style="display:flex;gap:0.8rem;align-items:flex-start;margin-bottom:0.6rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border)"><img src="'+imgUrl+'" style="width:100px;height:65px;object-fit:cover;border-radius:6px;flex-shrink:0" onerror="this.style.display=\'none\'"><div><a href="'+mapUrl+'" target="_blank" style="font-weight:600">'+name+' 📍</a><br><span style="color:var(--text2);font-size:0.78rem">'+a+'</span></div></div>';
-    }).join('')+'</div>' : ''}
-    ${c.foodScene ? '<h3>飲食亮點 Food Scene</h3><div class="detail-notes">'+linkifyExperiences(c.foodScene, c.city, '🍽️')+'</div>' : ''}
-    ${c.nature ? '<h3>自然與戶外 Nature & Outdoors</h3><div class="detail-notes">'+linkifyPlaces(c.nature, c.city, '🌿')+'</div>' : ''}
-    ${c.dayTrips ? '<h3>一日遊 Day Trips</h3><div class="detail-notes">'+c.dayTrips.split('｜').map(d => {
-      const name = d.split('(')[0].trim();
-      const mapUrl = 'https://www.google.com/maps/search/'+encodeURIComponent(name);
-      return '<div style="margin-bottom:0.5rem"><a href="'+mapUrl+'" target="_blank" style="font-weight:600">'+name+' 📍</a> <span style="color:var(--text2);font-size:0.78rem">'+d+'</span></div>';
-    }).join('')+'</div>' : ''}
-    ${c.nightlife ? '<h3>夜生活 Nightlife</h3><div class="detail-notes">'+linkifyExperiences(c.nightlife, c.city, '🌙')+'</div>' : ''}
-    ${c.culture ? '<h3>文化體驗 Culture</h3><div class="detail-notes">'+linkifyExperiences(c.culture, c.city, '🏛️')+'</div>' : ''}
-    ${c.seasonalEvents ? '<h3>季節活動 Seasonal Events</h3><div class="detail-notes">'+linkifyExperiences(c.seasonalEvents, c.city, '🎉')+'</div>' : ''}
-    ${c.uniqueExp ? '<h3>獨特體驗 Unique Experiences</h3><div class="detail-notes">'+linkifyExperiences(c.uniqueExp, c.city, '⭐')+'</div>' : ''}
-
-    ${c.topUnis ? '<h3>教育資源 Education</h3><dl class="detail-grid"><dt>頂級大學</dt><dd>'+c.topUnis+'</dd><dt>語言學校</dt><dd>'+(c.langSchools||'')+'</dd><dt>Nomad社群</dt><dd>'+(c.nomadCommunity||'')+'</dd></dl>' : ''}
-
-    ${c.notes ? '<h3>備註</h3><div class="detail-notes">'+c.notes+'</div>' : ''}
-  `;
-  document.getElementById('modalOverlay').classList.add('show');
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('show');
-}
-document.getElementById('modalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-});
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ============= TABS =============
-document.querySelectorAll('.nav button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-  });
-});
-
-// ============= FILTERS =============
-['filterRegion','filterBudget','sortBy'].forEach(id => {
-  document.getElementById(id).addEventListener('change', applyFilters);
-});
-document.getElementById('searchBox').addEventListener('input', applyFilters);
-
-// ============= CHARTS =============
-const regionColors = {europe:'rgba(108,140,255,0.7)',uk:'rgba(167,139,250,0.7)',asia:'rgba(244,114,182,0.7)',usa:'rgba(251,146,60,0.7)',oceania:'rgba(74,222,128,0.7)'};
-const regionBg = {europe:'rgba(108,140,255,0.15)',uk:'rgba(167,139,250,0.15)',asia:'rgba(244,114,182,0.15)',usa:'rgba(251,146,60,0.15)',oceania:'rgba(74,222,128,0.15)'};
-const regionLabels = {europe:'歐洲 Europe',uk:'英國 UK',asia:'亞洲 Asia',usa:'美國 USA',oceania:'紐澳 Oceania'};
-
-Chart.defaults.color = '#8b8fa3';
-Chart.defaults.borderColor = 'rgba(46,51,69,0.6)';
-Chart.defaults.font.family = "-apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif";
-
-let chartsInitialized = false;
-
-function initCharts() {
-  if (chartsInitialized) return;
-  chartsInitialized = true;
-
-  // === Chart 1: Safety vs Cost Scatter ===
-  new Chart(document.getElementById('chartScatter'), {
-    type: 'bubble',
-    data: {
-      datasets: Object.keys(regionColors).map(r => ({
-        label: regionLabels[r],
-        data: cities.filter(c => c.region === r).map(c => ({
-          x: c.monthlyBudget,
-          y: c.numbeoSafety,
-          r: Math.max(4, c.overall / 8),
-          city: c.zh + ' ' + c.city
-        })),
-        backgroundColor: regionColors[r],
-        borderColor: regionColors[r].replace('0.7','1'),
-        borderWidth: 1
-      }))
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { title: { display: true, text: '月成本 Monthly Cost (USD)', color: '#8b8fa3' }, grid: { color: 'rgba(46,51,69,0.4)' } },
-        y: { title: { display: true, text: '治安分數 Safety Score (Numbeo)', color: '#8b8fa3' }, min: 30, max: 95, grid: { color: 'rgba(46,51,69,0.4)' } }
-      },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const d = ctx.raw;
-              return `${d.city}: 安全 ${d.y}, 成本 $${d.x}/月`;
-            }
-          }
-        },
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12 } }
-      }
-    }
-  });
-
-  // === Chart 2: Top 20 Overall Bar ===
-  const top20 = [...cities].sort((a,b) => b.overall - a.overall).slice(0, 20).reverse();
-  new Chart(document.getElementById('chartTopOverall'), {
-    type: 'bar',
-    data: {
-      labels: top20.map(c => c.zh + ' ' + c.city),
-      datasets: [{
-        label: '綜合評分 Overall Score',
-        data: top20.map(c => c.overall),
-        backgroundColor: top20.map(c => regionColors[c.region]),
-        borderColor: top20.map(c => regionColors[c.region].replace('0.7','1')),
-        borderWidth: 1,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { min: 40, max: 85, grid: { color: 'rgba(46,51,69,0.4)' } },
-        y: { ticks: { font: { size: 11 } }, grid: { display: false } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => `綜合 Overall: ${ctx.raw}` } }
-      }
-    }
-  });
-
-  // === Chart 3: Cost Breakdown Stacked Bar ===
-  const costSorted = [...cities].sort((a,b) => a.monthlyBudget - b.monthlyBudget).slice(0, 25).reverse();
-  new Chart(document.getElementById('chartCostBreakdown'), {
-    type: 'bar',
-    data: {
-      labels: costSorted.map(c => c.zh),
-      datasets: [
-        { label: '租房 Rent', data: costSorted.map(c => c.rent), backgroundColor: 'rgba(108,140,255,0.7)', borderRadius: 2 },
-        { label: '飲食 Food', data: costSorted.map(c => c.food), backgroundColor: 'rgba(78,205,196,0.7)', borderRadius: 2 },
-        { label: '交通 Transport', data: costSorted.map(c => c.transport), backgroundColor: 'rgba(251,191,36,0.7)', borderRadius: 2 },
-        { label: '共享空間 Coworking', data: costSorted.map(c => c.coworking), backgroundColor: 'rgba(167,139,250,0.7)', borderRadius: 2 },
-        { label: '其他 Other', data: costSorted.map(c => Math.max(0, c.monthlyBudget - c.rent - c.food - c.transport - c.coworking)), backgroundColor: 'rgba(107,114,128,0.5)', borderRadius: 2 }
-      ]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { stacked: true, title: { display: true, text: 'USD / 月', color: '#8b8fa3' }, grid: { color: 'rgba(46,51,69,0.4)' } },
-        y: { stacked: true, ticks: { font: { size: 10 } }, grid: { display: false } }
-      },
-      plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rect', padding: 10, font: { size: 11 } } },
-        tooltip: { mode: 'index', intersect: false }
-      }
-    }
-  });
-
-  // === Chart 4: Radar - Jerry's Top Picks ===
-  const picks = ['Lisbon','Fukuoka','Seattle','Taipei','Prague','Edinburgh'].map(n => cities.find(c => c.city === n)).filter(Boolean);
-  const radarColors = ['rgba(108,140,255,0.8)','rgba(244,114,182,0.8)','rgba(251,146,60,0.8)','rgba(74,222,128,0.8)','rgba(167,139,250,0.8)','rgba(251,191,36,0.8)'];
-  new Chart(document.getElementById('chartRadar'), {
-    type: 'radar',
-    data: {
-      labels: ['治安 Safety','成本 Cost','旅遊 Tourism','醫療 Health','交通 Transport','英語 English'],
-      datasets: picks.map((c, i) => ({
-        label: c.zh + ' ' + c.city,
-        data: [c.safetyScore, c.costScore, (c.tourismScore||50), c.healthScore, c.publicTransport*20, c.engScore],
-        borderColor: radarColors[i],
-        backgroundColor: radarColors[i].replace('0.8','0.1'),
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: radarColors[i]
-      }))
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        r: {
-          min: 0, max: 100,
-          ticks: { stepSize: 25, backdropColor: 'transparent', font: { size: 10 } },
-          grid: { color: 'rgba(46,51,69,0.5)' },
-          angleLines: { color: 'rgba(46,51,69,0.5)' },
-          pointLabels: { font: { size: 12 }, color: '#e4e6ed' }
-        }
-      },
-      plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } }
-      }
-    }
-  });
-
-  // === Chart 5: Timezone vs Overall Scatter ===
-  new Chart(document.getElementById('chartTZ'), {
-    type: 'scatter',
-    data: {
-      datasets: Object.keys(regionColors).map(r => ({
-        label: regionLabels[r],
-        data: cities.filter(c => c.region === r).map(c => ({
-          x: c.tzOffset, y: c.overall, city: c.zh + ' ' + c.city
-        })),
-        backgroundColor: regionColors[r],
-        borderColor: regionColors[r].replace('0.7','1'),
-        pointRadius: 6, pointHoverRadius: 9
-      }))
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { title: { display: true, text: '與太平洋時間時差 Hours from PST', color: '#8b8fa3' }, min: -1, max: 22, grid: { color: 'rgba(46,51,69,0.4)' } },
-        y: { title: { display: true, text: '綜合評分 Overall Score', color: '#8b8fa3' }, min: 30, max: 85, grid: { color: 'rgba(46,51,69,0.4)' } }
-      },
-      plugins: {
-        tooltip: { callbacks: { label: ctx => `${ctx.raw.city}: 綜合 ${ctx.raw.y}, 時差 ${ctx.raw.x}h` } },
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12 } },
-        annotation: null
-      }
-    }
-  });
-
-  // === Chart 6: Safety Distribution Box by Region ===
-  const regions = ['europe','uk','asia','usa','oceania'];
-  const regionData = regions.map(r => {
-    const vals = cities.filter(c => c.region === r).map(c => c.numbeoSafety).sort((a,b) => a - b);
-    return vals;
-  });
-  // Use a grouped bar showing min/avg/max per region
-  const avgByRegion = regionData.map(v => Math.round(v.reduce((a,b)=>a+b,0)/v.length));
-  const minByRegion = regionData.map(v => v[0]);
-  const maxByRegion = regionData.map(v => v[v.length-1]);
-  new Chart(document.getElementById('chartRegionSafety'), {
-    type: 'bar',
-    data: {
-      labels: regions.map(r => regionLabels[r]),
-      datasets: [
-        { label: '最低 Min', data: minByRegion, backgroundColor: 'rgba(248,113,113,0.6)', borderRadius: 4 },
-        { label: '平均 Avg', data: avgByRegion, backgroundColor: 'rgba(251,191,36,0.7)', borderRadius: 4 },
-        { label: '最高 Max', data: maxByRegion, backgroundColor: 'rgba(74,222,128,0.7)', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        y: { min: 20, max: 95, title: { display: true, text: 'Numbeo 安全指數 Safety Index', color: '#8b8fa3' }, grid: { color: 'rgba(46,51,69,0.4)' } },
-        x: { grid: { display: false } }
-      },
-      plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rect', padding: 12 } },
-        tooltip: { mode: 'index', intersect: false }
-      }
-    }
-  });
-}
-
-
-
-// ============= LINKIFY HELPERS =============
-// For places (attractions, nature, day trips) -> Google Maps
-function linkifyPlaces(text, city, icon) {
-  if (!text) return '';
-  return text.split('｜').map(item => {
-    // Extract the actual place name: take the part before Chinese description
-    // e.g. "Sintra 辛特拉(40min火車)" -> "Sintra"
-    // e.g. "Mt. Rainier 雷尼爾山(2hr)" -> "Mt. Rainier"
-    let name = item.split('(')[0].trim();
-    // Try to get just the English/proper noun for better Maps results
-    const engMatch = name.match(/[A-Z][A-Za-z\s.'-]+/);
-    const searchName = engMatch ? engMatch[0].trim() : name;
-    const mapsQ = encodeURIComponent(searchName + ' ' + city);
-    const mapsUrl = 'https://www.google.com/maps/search/' + mapsQ;
-    return '<div style="margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">' +
-      '<a href="' + mapsUrl + '" target="_blank" style="font-weight:600">' + (icon||'📍') + ' ' + name + '</a>' +
-      '<br><span style="color:var(--text2);font-size:0.78rem">' + item + '</span></div>';
-  }).join('');
-}
-
-// For experiences (food, nightlife, culture, events, unique) -> Google Search with smart query
-function linkifyExperiences(text, city, icon) {
-  if (!text) return '';
-  return text.split('｜').map(item => {
-    // Extract venue/event name for search
-    // Priority: English proper nouns, then first meaningful segment
-    let name = item.split('(')[0].trim();
-    // Try to find a proper noun (capitalized English words)
-    const engMatch = name.match(/[A-Z][A-Za-z0-9\s.&'-]{2,}/g);
-    let searchTerm;
-    if (engMatch && engMatch.length > 0) {
-      // Use the longest English match as the search term
-      searchTerm = engMatch.sort((a,b) => b.length - a.length)[0].trim() + ' ' + city;
-    } else {
-      // Fallback: use the whole name + city
-      searchTerm = name + ' ' + city;
-    }
-    const googleUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchTerm);
-    // Also try Maps for ones that look like venue names
-    const hasVenue = engMatch && engMatch[0] && engMatch[0].length > 3;
-    const mapsUrl = hasVenue ? 'https://www.google.com/maps/search/' + encodeURIComponent(engMatch[0].trim() + ' ' + city) : null;
-    
-    let links = '<a href="' + googleUrl + '" target="_blank" style="font-weight:600">' + (icon||'🔍') + ' ' + name + '</a>';
-    if (mapsUrl) {
-      links += ' <a href="' + mapsUrl + '" target="_blank" style="font-size:0.7rem;color:var(--text2)">[地圖]</a>';
-    }
-    return '<div style="margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)">' +
-      links + '<br><span style="color:var(--text2);font-size:0.78rem">' + item + '</span></div>';
-  }).join('');
-}
-
-// ============= UNIVERSAL TABLE SORTING =============
-document.addEventListener('click', function(e) {
-  const th = e.target.closest('th[data-col]');
-  if (!th) return;
-  const table = th.closest('table');
-  const tbody = table.querySelector('tbody');
-  if (!tbody || !tbody.rows.length) return;
-  
-  const colIdx = Array.from(th.parentNode.children).indexOf(th);
-  const isAsc = th.classList.contains('asc');
-  
-  // Clear all sort indicators in this table
-  th.parentNode.querySelectorAll('th').forEach(h => h.classList.remove('asc','desc'));
-  th.classList.add(isAsc ? 'desc' : 'asc');
-  
-  const rows = Array.from(tbody.rows);
-  const dir = isAsc ? -1 : 1;
-  
-  rows.sort((a, b) => {
-    let aVal = a.cells[colIdx]?.textContent?.trim() || '';
-    let bVal = b.cells[colIdx]?.textContent?.trim() || '';
-    // Try numeric sort
-    const aNum = parseFloat(aVal.replace(/[$,★☆#]/g, ''));
-    const bNum = parseFloat(bVal.replace(/[$,★☆#]/g, ''));
-    if (!isNaN(aNum) && !isNaN(bNum)) return (aNum - bNum) * dir;
-    return aVal.localeCompare(bVal) * dir;
-  });
-  
-  rows.forEach(row => tbody.appendChild(row));
-});
-
-
-// ============= TAB-AWARE FILTER BAR =============
-const filterBar = document.querySelector('.filters');
-const tabsWithFilters = new Set(['overview','safety','cost','food','healthcare','wealth','tourism','practical']);
-
-document.querySelectorAll('.nav button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tab = btn.dataset.tab;
-    filterBar.style.display = tabsWithFilters.has(tab) ? 'flex' : 'none';
-  });
-});
-
-// ============= INIT =============
-applyFilters();
-
-// Lazy-init charts when tab is clicked
-document.querySelector('[data-tab="charts"]').addEventListener('click', () => {
-  setTimeout(initCharts, 100);
-});
-
+function tick(){drawWeather();updateParallax();updateCursor();updateFire();requestAnimationFrame(tick)}
+tick();
+addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',rsz,{passive:true});
+})();
 </script>
 </body>
 </html>
