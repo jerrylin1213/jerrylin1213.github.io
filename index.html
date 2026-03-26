@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jerry Lin — Software Engineer</title>
+<title>Jerry Lin</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230a0e18'/><text x='50' y='68' font-family='Inter,system-ui,sans-serif' font-size='56' font-weight='700' fill='%23e8c070' text-anchor='middle'>J</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -54,7 +55,8 @@ a{color:inherit;text-decoration:none}
 @keyframes flc{0%{height:58px;transform:translateX(-50%) scaleX(.9)}100%{height:72px;transform:translateX(-50%) scaleX(1.1)}}
 
 /* ===== NAV ===== */
-nav{position:fixed;top:0;left:0;right:0;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:1000;transition:all .5s}
+nav{position:fixed;top:0;left:0;right:0;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:1000;transition:all .5s;cursor:auto}
+nav a{cursor:pointer}
 nav.scrolled{background:rgba(10,14,24,.92);backdrop-filter:blur(20px);padding:14px 40px}
 .nav-logo{font-weight:700;font-size:.95rem;color:rgba(255,255,255,.4)}
 .nav-links{display:flex;gap:30px}
@@ -448,9 +450,9 @@ footer{text-align:center;padding:32px;font-size:.7rem;color:rgba(255,255,255,.07
     <div class="about-photo reveal"><img src="assets/headshot.jpg" alt="Jerry Lin" loading="lazy"></div>
     <div>
       <div class="about-text reveal">
-        <p><strong>Chia-Wei (Jerry) Lin</strong> — I write code at Microsoft, but what I really do is make things disappear. Unnecessary middleware, slow sync jobs, layers of complexity no one asked for — I strip them away so the systems underneath can breathe.</p>
-        <p>Before this, startups in Toronto and Silicon Valley taught me that elegant code is code you never notice. You ship the feature, not the complexity. BASc from Bellevue College, but the real education never stopped.</p>
-        <p>After hours: espresso dialed to the gram, rain on a tent roof, fog rolling through valleys, and a quiet conviction that the best investments are the ones you can hold through winter.</p>
+        <p><strong>Chia-Wei (Jerry) Lin</strong> — Software Engineer at Microsoft, currently working on data pipeline infrastructure for Business Planning Analytics. Most of my job is figuring out how to make things faster and simpler — killed a middleware layer, cut sync times by 30%, that kind of stuff.</p>
+        <p>Before Microsoft, I did full-stack work at a couple startups in Toronto and Santa Clara. Learned a lot about shipping fast and not overengineering. BASc in Software Development from Bellevue College.</p>
+        <p>Outside of work I'm usually pulling espresso shots, planning the next camping trip, or staring at crypto charts. Originally from Nantou, Taiwan.</p>
       </div>
       <div class="about-meta reveal">
         <div class="meta-item"><span class="label">Based in</span><span class="value">Vancouver, BC</span></div>
@@ -465,9 +467,9 @@ footer{text-align:center;padding:32px;font-size:.7rem;color:rgba(255,255,255,.07
   <div class="sec-label reveal">Experience</div>
   <h2 class="sec-heading reveal">Where I've <em>built</em> things.</h2>
   <div class="exp-grid">
-    <div class="exp-card glass reveal d1"><div class="exp-top"><span class="exp-company">Microsoft</span><span class="exp-date">Oct 2024 – Present</span></div><div class="exp-role">Software Engineer</div><ul class="exp-desc"><li>Eliminated Dataverse middleware — streamlined F&O → Data Lake architecture</li><li>Shipped Tables in the Lake — 30% faster sync, 1+ hour shorter install</li><li>Built Copilot Studio API integration for real-time road closure data</li></ul></div>
-    <div class="exp-card glass reveal d2"><div class="exp-top"><span class="exp-company">Alibi</span><span class="exp-date">Aug – Nov 2023</span></div><div class="exp-role">Full-Stack Developer Intern</div><ul class="exp-desc"><li>Built promoter group system with atomic CRUD across owner & promoter views</li><li>Designed anonymous-to-full user elevation flow and Firestore data models</li><li>Expanded Firestore security rules with read/write validation</li></ul></div>
-    <div class="exp-card glass reveal d3"><div class="exp-top"><span class="exp-company">Altomni</span><span class="exp-date">Sep 2022 – Mar 2023</span></div><div class="exp-role">SDE Intern</div><ul class="exp-desc"><li>Designed tree-structure customer journey data models for MySQL</li><li>Implemented workflow task scheduling and execution via Redis</li><li>Built Shopify webhooks for real-time customer event processing</li></ul></div>
+    <div class="exp-card glass reveal d1"><div class="exp-top"><span class="exp-company"><img src="https://logo.clearbit.com/microsoft.com" alt="" style="height:18px;width:18px;border-radius:3px;vertical-align:middle;margin-right:6px;object-fit:contain">Microsoft</span><span class="exp-date">Oct 2024 – Present</span></div><div class="exp-role">Software Engineer</div><ul class="exp-desc"><li>Eliminated Dataverse middleware — streamlined F&O → Data Lake architecture</li><li>Shipped Tables in the Lake — 30% faster sync, 1+ hour shorter install</li><li>Built Copilot Studio API integration for real-time road closure data</li></ul></div>
+    <div class="exp-card glass reveal d2"><div class="exp-top"><span class="exp-company"><img src="https://logo.clearbit.com/alibisoftware.com" alt="" style="height:18px;width:18px;border-radius:3px;vertical-align:middle;margin-right:6px;object-fit:contain" onerror="this.src='https://www.google.com/s2/favicons?domain=linkedin.com/company/alibiapp&sz=32';this.onerror=null">Alibi</span><span class="exp-date">Aug – Nov 2023</span></div><div class="exp-role">Full-Stack Developer Intern</div><ul class="exp-desc"><li>Built promoter group system with atomic CRUD across owner & promoter views</li><li>Designed anonymous-to-full user elevation flow and Firestore data models</li><li>Expanded Firestore security rules with read/write validation</li></ul></div>
+    <div class="exp-card glass reveal d3"><div class="exp-top"><span class="exp-company"><img src="https://logo.clearbit.com/altomni.com" alt="" style="height:18px;width:18px;border-radius:3px;vertical-align:middle;margin-right:6px;object-fit:contain" onerror="this.src='https://www.google.com/s2/favicons?domain=altomni.com&sz=32';this.onerror=null">Altomni</span><span class="exp-date">Sep 2022 – Mar 2023</span></div><div class="exp-role">SDE Intern</div><ul class="exp-desc"><li>Designed tree-structure customer journey data models for MySQL</li><li>Implemented workflow task scheduling and execution via Redis</li><li>Built Shopify webhooks for real-time customer event processing</li></ul></div>
   </div>
 </div></section>
 
@@ -607,7 +609,7 @@ document.querySelectorAll('a,.btn,.sk,.cl,.nav-links a').forEach(function(el){
   el.addEventListener('mouseenter',function(){cdot.classList.add('hover')});
   el.addEventListener('mouseleave',function(){cdot.classList.remove('hover')});
 });
-function updateCursor(){chx+=(cmx-chx)*.12;chy+=(cmy-chy)*.12;cdot.style.left=chx+'px';cdot.style.top=chy+'px'}
+function updateCursor(){chx=cmx;chy=cmy;cdot.style.left=chx+'px';cdot.style.top=chy+'px'}
 
 /* ===== Fire wind effect (rotate from base) ===== */
 var fw=document.querySelector('.fire-wrap'),fSvg=fw?fw.querySelector('svg'):null,fireTilt=0,fireTgt=0,lastFX=0;
